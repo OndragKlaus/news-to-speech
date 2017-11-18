@@ -69,6 +69,7 @@ class RssProvider(BaseProvider):
 
     language_map = {
         'de': 'german',
+        'de-AT': 'german',
         'en': 'english',
         'cz': 'czech',
         'fr': 'frensh'
@@ -114,3 +115,41 @@ class SueddeutscheZeitung(RssProvider):
         category = urlparse(item.url).path.lstrip('/').partition('/')[0]
 
         return ArticleMetadata(authors=article.authors, category=category)
+
+
+class DerStandard(RssProvider):
+
+    FEED_URL = 'http://derStandard.at/?page=rss&ressort=Seite1'
+
+    def __init__(self):
+        super().__init__(self.FEED_URL)
+
+    def get_article_metadata(self, item: ArticleUrl, html: str,
+                             soup: bs4.BeautifulSoup) -> ArticleMetadata:
+        from .article import Article
+        from urllib.parse import urlparse
+        import traceback
+
+        article = Article(item.url)
+        article.download(input_html=html)
+        try:
+            import pdb; pdb.set_trace()
+            article.parse(source='derStandard', soup=soup)
+        except:
+            traceback.print_exc()
+            return ArticleMetadata()
+
+
+        # Use page header to determine category.
+        category = soup.find('div', id='pageTop') \
+            .find('div', id='breadcrumb') \
+            .find('span', 'item').a.text
+
+        return ArticleMetadata(authors=article.authors, category=category)
+
+#p = DerStandard()
+#import requests
+#html = requests.get('http://derstandard.at/2000068057992/Deutschland-Eltern-duerfen-ihre-Kinder-nicht-mehr-mittels-Smartwatch-abhoeren').text
+#soup = bs4.BeautifulSoup(html, 'lxml')
+#item = ArticleUrl('0', 'http://derstandard.at/2000068057992/Deutschland-Eltern-duerfen-ihre-Kinder-nicht-mehr-mittels-Smartwatch-abhoeren', 'de-AT', None)
+#p.get_article_metadata(item, html, soup)

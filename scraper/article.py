@@ -53,6 +53,8 @@ class Article(newspaper.Article):
 
             else:
                 self.text = ''
+        elif source == 'derStandard':
+            pass
         else:
             pass
 
