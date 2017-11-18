@@ -1,0 +1,13 @@
+<resources>
+    <string name="primaryKey">caeb45792ad34f9db4ad1c720f7f9c6e</string>
+
+    <!--
+    Enter an optional authentication Uri for Bing Speech API such as:
+    https://westus.api.cognitive.microsoft.com/sts/v1.0/issuetoken
+    -->
+    <string name="authenticationUri"></string>
+
+    <string name="luisAppID">415a3ccb-2873-4efd-8ce7-417a0670febd</string>
+    <string name="luisSubscriptionID">b4cd6f8ee7a1449eaa63ec348fc625f2</string>
+    <string name="app_name">News To Speech</string>
+</resources>
