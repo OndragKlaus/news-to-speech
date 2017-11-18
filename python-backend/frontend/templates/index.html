@@ -6,23 +6,35 @@
     <script src="{{ url_for('static', filename='jquery.qubit.js') }}"></script>
     <script src="{{ url_for('static', filename='jquery.bonsai.js') }}"></script>
     <link href="{{ url_for('static', filename='jquery.bonsai.css') }}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
   </head>
   <body>
+    <script>
+      let audio = null;
+      function playArticleAudio(article_id) {
+        let url = '/audiofile/' + article_id;
+        audio = new Audio(url);
+        audio.play();
+      }
+    </script>
     <ol id="content">
       {% for provider in providers %}
         <li class="expanded provider">
           {{ provider.pretty_name }}
           <ol>
             {% for category in provider.query_categories() %}
+              {% set articles = category.articles_for_provider(provider) %}
               <li class="category">
-                {{ category.name }}
+                {{ category.name.capitalize() }} ({{ articles|length }})
                 <ol>
-                  {% for article in category.articles %}
-                    <li class="article">{{ article.title }}
-                      <details>
-                        <p>{{ article.summary }}</p>
-                      </details>
+                  {% for article in articles %}
+                    <li class="article" data-id="{{ article.article_id }}">
+                      {{ article.title }}
+                      <ol>
+                        <li class="summary">{{ article.summary }}</li>
+                        <li class="play"><button onclick="playArticleAudio({{ article.article_id }})">Play</button></li>
+                      </ol>
                     </li>
                   {% endfor %}
                 </ol>
@@ -32,7 +44,7 @@
         </li>
       {% endfor %}
     </ol>
-    <script>$
+    <script>
       $('#content').bonsai({
         expandAll: false,
         checkboxes: true, // depends on jquery.qubit plugin

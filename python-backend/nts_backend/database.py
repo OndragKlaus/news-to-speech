@@ -65,6 +65,9 @@ class Category(db.Entity):
             obj = cls(name=name)
         return obj
 
+    def articles_for_provider(self, provider):
+        return orm.select(a for a in Article if a in self.articles and a in provider.articles)
+
 
 class Article(db.Entity):
     article_id = orm.PrimaryKey(int, auto=True)
