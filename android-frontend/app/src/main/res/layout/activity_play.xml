@@ -7,52 +7,71 @@
     tools:context="com.example.amarsaljic.newstospeech.PlayActivity">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffff0000"
-            android:layout_above="@+id/bottom_panel">
+            android:layout_above="@+id/bottom_panel"
+            android:background="#ffff0000">
 
         </ScrollView>
 
         <LinearLayout
             android:id="@+id/bottom_panel"
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
+            android:layout_height="65dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/button_icon"
-                />
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:tint="@color/grey"
+                android:src="@drawable/ic_replay_10_black_48dp" />
 
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:tint="@color/grey"
+                android:src="@drawable/ic_skip_previous_black_48dp" />
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:tint="@color/colorAccent"
+                android:src="@drawable/ic_play_circle_filled_black_48dp" />
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:tint="#424242"
+                android:src="@drawable/ic_skip_next_black_48dp" />
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:tint="@color/grey"
+                android:src="@drawable/ic_star_border_black_48dp" />
+            <!--
             <Button
                 android:layout_width="0dip"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Button 1"/>
-
-            <Button
-                android:layout_width="0dip"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Button 2"/>
-
-            <Button
-                android:layout_width="0dip"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Button 3"/>
-
-            <Button
-                android:layout_width="0dip"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Button 4"/>
+                android:text="Button 1"/> -->
         </LinearLayout>
 
     </RelativeLayout>
@@ -65,6 +84,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        app:layout_anchor="@+id/relativeLayout"
+        app:layout_anchorGravity="right|center"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
 </android.support.design.widget.CoordinatorLayout>
