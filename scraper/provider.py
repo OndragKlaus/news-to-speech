@@ -22,7 +22,7 @@ class ArticleUrl(NamedTuple):
 
 class ArticleMetadata(NamedTuple):
 
-    title: str
+    title: str = None
     authors: List[str] = None
     category: str = None
     keywords: List[str] = None

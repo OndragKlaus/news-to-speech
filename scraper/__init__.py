@@ -31,25 +31,24 @@ def get_article(provider, info):
     metadata = provider.get_article_metadata(info, html, soup)
     summary = provider.summarize_article(info, html, soup)
 
-    provider_id = database.get_provider_id(provider.get_provider_id(), create=True)
-    category_id = database.get_category_id(metadata.category or 'unknown', create=True)
+    # Ensure that the provider exists.
+    database.get_provider_id(provider.get_provider_id(), create=True)
 
     try:
         database.create_article(
-            provider_id = provider_id,
-            category_id = category_id,
+            provider = provider.get_provider_id(),
+            category = metadata.category or 'unknown',
             guid = info.id,
             url = info.url,
             #language = info.language,  # XXX
             author = ';'.join(metadata.authors or []),  # XXX
             title = metadata.title,
-            body = '',
             summary = summary,
-            last_modified = metadata.date_published,  # XXX rename to date_published
-            last_summarize = datetime.datetime.now()  # XXX rename to date_summarized
+            date_published = metadata.date_published,
+            date_summarized = datetime.datetime.now()
         )
     except Exception as exc:
-        logging.error(exc)
+        logging.exception(exc)
 
 
 def main():

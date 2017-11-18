@@ -23,15 +23,13 @@ CREATE TABLE IF NOT EXISTS Article (
   article_id      BIGSERIAL PRIMARY KEY,
   provider_id     BIGSERIAL REFERENCES Provider (provider_id),
   category_id     BIGSERIAL REFERENCES Category (category_id),
-  keyword_id      BIGSERIAL REFERENCES Keyword (keyword_id),
   guid            TEXT NOT NULL UNIQUE,
   url             TEXT NOT NULL,
   author          TEXT,
   title           TEXT,
-  body            TEXT,
   summary         TEXT,
-  last_modified   TIMESTAMP,
-  last_summarized TIMESTAMP
+  date_published  TIMESTAMP,
+  date_summarized TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS ArticleToKeyword (

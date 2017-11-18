@@ -3,6 +3,7 @@ import os
 import pathlib
 import psycopg2
 import subprocess
+import sys
 import toml
 
 conn = None
@@ -32,7 +33,7 @@ def psql():
     cmd = ['psql', '-U', config['user'], '-d', config['dbname'], '-h', config['host']]
     env = os.environ.copy()
     env['PGPASSWORD'] = config['password']
-    subprocess.call(cmd, env=env)
+    subprocess.call(cmd + sys.argv[1:], env=env)
 
 
 def get_provider_id(name, create=False):
@@ -79,20 +80,18 @@ def delete_article_by_guid(guid, notexist_ok=False):
     cur.execute("DELETE FROM Article WHERE guid = %s", (guid,))
 
 
-def create_article(provider_id, category_id, url, guid, body, title,
-                  last_modified, author):
+def create_article(provider, category, guid, url, author, title,
+                   summary, date_published, date_summarized=None):
     cur = conn.cursor()
     cur.execute("""
-        INSERT INTO Article (provider_id, url, guid, body, title,
-                                last_modified, category_id, author)
-        SELECT %s, %s, %s, %s, %s, %s, %s, %s
+        INSERT INTO Article (
+            provider_id, category_id, guid, url, author,
+            title, summary, date_published, date_summarized)
+        SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s
     """, (
-        provider_id,
-        url,
-        guid,
-        body,
-        title,
-        last_modified,
-        category_id,
-        author))
+        get_provider_id(provider, create=False),
+        get_category_id(category, create=True),
+        guid, url, author, title, summary, date_published,
+        date_summarized)
+    )
     conn.commit()
