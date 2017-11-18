@@ -18,6 +18,8 @@ numpy = "*"
 pyaudio = "*"
 flask-restful = "*"
 pony = "*"
+pydub = "*"
+
 
 [requires]
 
