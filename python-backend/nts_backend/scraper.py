@@ -23,6 +23,7 @@ providers = [
 ]
 
 
+@database.orm.db_session
 def get_article(provider, info):
     logging.info('GET {}'.format(info.url))
     html = requests.get(info.url).text
@@ -31,19 +32,18 @@ def get_article(provider, info):
     summary = provider.summarize_article(info, html, soup)
 
     if not metadata:
-        logger.warn('NO METADATA {}'.format(info.url))
+        logging.warn('NO METADATA {}'.format(info.url))
         return
 
-    # Ensure that the provider exists.
-    database.get_provider_id(provider.get_provider_id(), create=True)
-
     try:
-        database.create_article(
-            provider = provider.get_provider_id(),
-            category = metadata.category or 'unknown',
+        database.Article(
+            provider_id = database.Provider.get_or_create(
+                name = provider.get_provider_id(),
+                pretty_name = provider.get_provider_pretty_name()
+            ),
+            category_id = database.Category.get_or_create(name=metadata.category or 'unknown'),
             guid = info.id,
             url = info.url,
-            #language = info.language,  # XXX
             author = ';'.join(metadata.authors or []),  # XXX
             title = metadata.title,
             summary = summary,
@@ -60,10 +60,12 @@ def main():
     logging.basicConfig(level=logging.INFO)
     database.init()
 
+    logging.info('Entering provision loop...')
     while True:
         for provider in providers:
+            logging.info('Testing {}'.format(provider.get_provider_id()))
             for info in provider.get_recent_article_urls():
-                if database.has_article_with_guid(info.id):
+                if database.Article.exists(guid=info.id):
                     logging.info('SKIP {}'.format(info.url))
                     continue
                 get_article(provider, info)
