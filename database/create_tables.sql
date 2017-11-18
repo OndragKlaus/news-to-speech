@@ -5,12 +5,12 @@ DROP TABLE Category;
 
 CREATE TABLE IF NOT EXISTS Provider (
   provider_id BIGSERIAL PRIMARY KEY,
-  name        TEXT NOT NULL
+  name        TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS Category (
   category_id BIGSERIAL PRIMARY KEY,
-  name        TEXT NOT NULL
+  name        TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS Article (
