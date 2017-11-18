@@ -29,7 +29,6 @@ class Tokenizer:
 def tokens_to_sentences(tokenization):
     sentences = []
     for sentence_token in tokenization:
-        print(sentence_token)
         word_list = [token['NormalizedToken'] for token in sentence_token['Tokens']]
         sentence = ' '.join(word_list)
         sentences.append(sentence)
