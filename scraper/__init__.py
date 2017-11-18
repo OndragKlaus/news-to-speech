@@ -4,12 +4,14 @@ Scraper for news articles.
 
 import argparse
 import asyncio
+from collections import namedtuple
 import feedparser
 import requests
 import sys
 import toml
 
 from database import conn
+from article import Article
 
 
 async def get_rss_urls(rss_url):
@@ -25,6 +27,24 @@ async def fill_database():
     async for link in get_rss_urls(sz_url):
         print(link)
 
+class Scraper:
+    ArticleTuple = namedtuple('ArticleTuple', ['article', 'source'])
+
+    def __init__():
+        self.articles = []
+        pass
+
+    def add_article(self, url, source=''):
+        article = Article(url=url)
+        self.articles.append(ArticleTuple(article, source))
+
+    def scrape(self):
+        for article, source in self.articles:
+            article.download()
+            article.parse(source)
+
+    def get_articles(self):
+        return [article_tuple.article for article_tuple in self.articles]
 
 def main():
     loop = asyncio.get_event_loop()
