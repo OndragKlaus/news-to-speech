@@ -98,6 +98,7 @@ class SueddeutscheZeitung(RssProvider):
                              soup: bs4.BeautifulSoup) -> ArticleMetadata:
         from .article import Article
         from urllib.parse import urlparse
+        import time
         import traceback
 
         article = Article(item.url)
@@ -108,9 +109,15 @@ class SueddeutscheZeitung(RssProvider):
             traceback.print_exc()
             return ArticleMetadata()
 
-        import pdb; pdb.set_trace()
-
         # Determine the category name from the URL.
         category = urlparse(item.url).path.lstrip('/').partition('/')[0]
 
-        return ArticleMetadata(authors=article.authors, category=category)
+        # Convert the time.struct_time to datetime.
+        timestamp = time.mktime(item.data['published_parsed'])
+        date_published = datetime.fromtimestamp(timestamp)
+
+        return ArticleMetadata(
+            authors=article.authors,
+            category=category,
+            keywords=article.keywords,
+            date_published=date_published)
