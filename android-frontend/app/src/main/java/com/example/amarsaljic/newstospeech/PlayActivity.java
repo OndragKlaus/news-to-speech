@@ -16,6 +16,8 @@ public class PlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_play);
         final MediaPlayer example = MediaPlayer.create(PlayActivity.this, R.raw.a1);
 
+        DefaultArticles da = DefaultArticles.getInstance(this);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
