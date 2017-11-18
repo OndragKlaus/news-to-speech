@@ -78,6 +78,7 @@ def delete_article_by_guid(guid, notexist_ok=False):
     if not notexist_ok and not has_article_with_guid(guid):
         raise ValueError('article {!r} does not exist.'.format(guid))
     cur.execute("DELETE FROM Article WHERE guid = %s", (guid,))
+    conn.commit()
 
 
 def create_article(provider, category, guid, url, author, title,
@@ -95,3 +96,27 @@ def create_article(provider, category, guid, url, author, title,
         is_top_article, date_published, date_summarized)
     )
     conn.commit()
+
+def get_articles(provider_id=None, category_id=None):
+    conds = []
+    vars = []
+    if provider_id:
+        conds.append('provider_id = %s')
+        vars.append(provider_id)
+    if category_id:
+        conds.append('category_id = %s')
+        vars.append(category_id)
+
+    sql = 'SELECT article_id FROM Article'
+    if conds:
+        sql += ' WHERE ' + ' AND '.join(conds)
+
+    cur = conn.cursor()
+    cur.execute(sql, vars)
+    return [article_id[0] for article_id in cur.fetchall()]
+
+def get_article_by_id(article_id):
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM Article WHERE article_id = %s', article_id)
+    colnames = [desc[0] for desc in cur.description]
+    return dict(zip(colnames, cur.fetchone()))
