@@ -25,7 +25,10 @@ class Article(newspaper.Article):
 
     def parse(self, source='', soup=None):
         super().parse()
-        soup = BeautifulSoup(self.html, 'lxml')
+
+        if soup is None:
+            soup = BeautifulSoup(self.html, 'lxml')
+
         if source == 'sz':
             text_buf = io.StringIO()
 
@@ -44,7 +47,15 @@ class Article(newspaper.Article):
                 for author in author_spans:
                     self.authors.append(author.text.strip())
 
+                keyword_meta = soup.find('meta', {'name': 'keywords'})
+                self.keywords = [keyword.strip()
+                        for keyword in keyword_meta['content'].split()]
+
             else:
                 self.text = ''
         else:
             pass
+
+#a = Article(url='http://www.sueddeutsche.de/news/karriere/arbeit-jobs-fuer-geisteswissenschaftler-sind-oft-gut-versteckt-dpa.urn-newsml-dpa-com-20090101-171103-99-717262')
+#a.download()
+#a.parse(source='sz')
