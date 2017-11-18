@@ -49,8 +49,13 @@ class Category(db.Entity):
     name = orm.Required(str)
     articles = orm.Set('Article')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = self.name.strip().lower()
+
     @classmethod
     def get_or_create(cls, name):
+        name = name.strip().lower()
         obj = cls.get(name=name)
         if not obj:
             obj = cls(name=name)
