@@ -17,7 +17,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ExpandableListView;
 import android.widget.TextView;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class TabListActivity extends AppCompatActivity {
 
@@ -121,9 +125,27 @@ public class TabListActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_tab_list, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            ExpandableListView expandableListView = (ExpandableListView) rootView.findViewById(R.id.article_list_view);
+            HashMap<String, List<Article>> relevantArticlesSortedInCategories = getRelevantArticlesSortedInCategories(Integer.getInteger(ARG_SECTION_NUMBER));
+            List<String> availableCategories = getAvailableCategories(Integer.getInteger(ARG_SECTION_NUMBER));
+            ArticleExpandableListAdapter expandableListAdapter = new ArticleExpandableListAdapter(getContext(), availableCategories, relevantArticlesSortedInCategories);
+            expandableListView.setAdapter(expandableListAdapter);
+            expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+                @Override
+                public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
+                    // TODO: Open DetailView!
+                    return false;
+                }
+            });
             return rootView;
+        }
+
+        private HashMap<String, List<Article>> getRelevantArticlesSortedInCategories(int argSectionNumber) {
+            return null;
+        }
+
+        private List<String> getAvailableCategories(int argSectionNumber) {
+            return null;
         }
     }
 
@@ -141,7 +163,7 @@ public class TabListActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            return PlaceholderFragment.newInstance(position);
         }
 
         @Override
