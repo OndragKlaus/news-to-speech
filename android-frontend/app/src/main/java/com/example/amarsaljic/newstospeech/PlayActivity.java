@@ -28,7 +28,7 @@ public class PlayActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 if (article_audio.isPlaying()) {
-                    article_audio.seekTo(0);
+                    article_audio.pause();
                 } else {
                     article_audio.start();
                 }
