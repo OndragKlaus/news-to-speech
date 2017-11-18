@@ -115,3 +115,13 @@ def get_article_by_id(article_id):
     cur.execute('SELECT * FROM Article WHERE article_id = %s', (article_id,))
     colnames = [desc[0] for desc in cur.description]
     return dict(zip(colnames, cur.fetchone()))
+
+
+def save_article_audioblob(article_id, audioblob):
+    assert isinstance(audioblob, bytes)
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE Article SET audioblob = %s
+        WHERE article_id = %s
+    """, (audioblob, article_id))
+    conn.commit()
