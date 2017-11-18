@@ -1,10 +1,10 @@
 import flask
 
+from .app import app
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
+from nts_backend import database
 from pony import orm
-
-from . import database
 
 
 class Providers(Resource):
@@ -42,12 +42,11 @@ class Articles(Resource):
         return [x.to_dict(exclude=exclude) for x in query]
 
 
-database.init()
-app = Flask('News-To-Speech REST API')
 api = Api(app)
 api.add_resource(Providers, '/providers')
 api.add_resource(Categories, '/categories')
 api.add_resource(Articles, '/articles')
+
 
 @app.route('/audiofile/<article_id>')
 @orm.db_session
@@ -62,7 +61,3 @@ def serve_audio_file(article_id):
         return response
     else:
         flask.abort(404)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)

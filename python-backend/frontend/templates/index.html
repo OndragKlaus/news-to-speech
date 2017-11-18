@@ -33,7 +33,7 @@
                       {{ article.title }}
                       <ol>
                         <li class="summary">{{ article.summary }}</li>
-                        <li class="play"><button onclick="playArticleAudio({{ article.article_id }})">Play</button></li>
+                        <li class="play"><button onclick="playArticleAudio(this.getAttribute('data-id'))" data-id="{{ article.article_id }}">Play</button></li>
                       </ol>
                     </li>
                   {% endfor %}
