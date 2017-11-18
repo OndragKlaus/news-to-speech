@@ -30,6 +30,9 @@ class ArticleMetadata(NamedTuple):
 
 class BaseProvider:
 
+    def get_provider_id(self) -> str:
+        raise NotImplementedError
+
     def get_recent_article_urls(self) -> Iterable[ArticleUrl]:
         """
         Returns a list of recent articles that need to be parsed. The method
@@ -93,6 +96,9 @@ class SueddeutscheZeitung(RssProvider):
 
     def __init__(self):
         super().__init__(self.FEED_URL)
+
+    def get_provider_id(self) -> str:
+        return 'de.sueddeutsche'
 
     def get_article_metadata(self, item: ArticleUrl, html: str,
                              soup: bs4.BeautifulSoup) -> ArticleMetadata:
