@@ -5,3 +5,9 @@ dbname = "nts"
 user = "nts"
 password = "???"
 host = "???"
+
+[bingspeechapi]
+key = "???"
+
+[linguisticsapi]
+key = "???"

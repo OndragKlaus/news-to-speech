@@ -15,6 +15,7 @@ requests = "*"
 toml = "*"
 sumy = "*"
 numpy = "*"
+pyaudio = "*"
 
 
 [requires]

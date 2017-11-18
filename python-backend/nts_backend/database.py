@@ -85,7 +85,8 @@ def create_article(provider, category, guid, url, author, title,
     )
     conn.commit()
 
-def get_articles(provider_id=None, category_id=None):
+
+def get_articles(provider_id=None, category_id=None, has_audioblob=None):
     conds = []
     vars = []
     if provider_id:
@@ -94,6 +95,11 @@ def get_articles(provider_id=None, category_id=None):
     if category_id:
         conds.append('category_id = %s')
         vars.append(category_id)
+    if has_audioblob is not None:
+        if has_audioblob:
+            conds.append('audioblob IS NOT NULL')
+        else:
+            conds.append('audioblob IS NULL')
 
     sql = 'SELECT article_id FROM Article'
     if conds:
@@ -103,8 +109,9 @@ def get_articles(provider_id=None, category_id=None):
     cur.execute(sql, vars)
     return [article_id[0] for article_id in cur.fetchall()]
 
+
 def get_article_by_id(article_id):
     cur = conn.cursor()
-    cur.execute('SELECT * FROM Article WHERE article_id = %s', article_id)
+    cur.execute('SELECT * FROM Article WHERE article_id = %s', (article_id,))
     colnames = [desc[0] for desc in cur.description]
     return dict(zip(colnames, cur.fetchone()))
