@@ -43,14 +43,23 @@ class Provider(db.Entity):
             obj = cls(name=name, pretty_name=pretty_name)
         return obj
 
+    def query_categories(self):
+        # XXX can we do this over self.articles, too?
+        return orm.select(a.category_id for a in Article if a.provider_id == self)
+
 
 class Category(db.Entity):
     category_id = orm.PrimaryKey(int, auto=True)
     name = orm.Required(str)
     articles = orm.Set('Article')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = self.name.strip().lower()
+
     @classmethod
     def get_or_create(cls, name):
+        name = name.strip().lower()
         obj = cls.get(name=name)
         if not obj:
             obj = cls(name=name)
