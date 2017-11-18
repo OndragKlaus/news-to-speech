@@ -160,7 +160,16 @@ class DerStandard(RssProvider):
             .find('div', id='breadcrumb') \
             .find('span', 'item').a.text
 
-        return ArticleMetadata(authors=article.authors, category=category)
+        # Convert the time.struct_time to datetime.
+        timestamp = time.mktime(item.data['published_parsed'])
+        date_published = datetime.fromtimestamp(timestamp)
+
+        return ArticleMetadata(
+            title=item.data['title'],
+            authors=article.authors,
+            category=category,
+            keywords=article.keywords,
+            date_published=date_published)
 
 #p = DerStandard()
 #import requests
