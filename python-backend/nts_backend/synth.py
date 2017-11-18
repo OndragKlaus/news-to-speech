@@ -20,6 +20,7 @@ from .tokenizer import Tokenizer, tokens_to_sentences
 parser = argparse.ArgumentParser()
 parser.add_argument('--once', action='store_true')
 parser.add_argument('--interval', type=float, default=10.0)
+parser.add_argument('--export-to')
 
 
 def audio_memory_export(segment, *args, **kwargs):
@@ -63,6 +64,18 @@ def main():
     args = parser.parse_args()
     database.init()
     logging.basicConfig(level=logging.INFO)
+
+    if args.export_to:
+        ids = database.get_articles(has_audioblob=True)
+        logging.info('Exporting {} synthesized audio files to {}'.format(len(ids), args.export_to))
+        os.makedirs(args.export_to, exist_ok=True)
+        for article_id in ids:
+            audiodata = database.get_article_audioblob(article_id)
+            filename = os.path.join(args.export_to, '{}.mp3'.format(article_id))
+            logging.info('  - {}'.format(filename))
+            with open(filename, 'wb') as fp:
+                fp.write(audiodata)
+        return
 
     logging.info('Connecting to Bing Speech API ...')
     service = BingSpeechApi(config['bingspeechapi']['key'])

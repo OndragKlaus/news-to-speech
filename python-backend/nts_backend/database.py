@@ -125,3 +125,11 @@ def save_article_audioblob(article_id, audioblob):
         WHERE article_id = %s
     """, (audioblob, article_id))
     conn.commit()
+
+
+def get_article_audioblob(article_id):
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT audioblob FROM Article WHERE article_id = %s
+    """, (article_id,))
+    return cur.fetchone()[0]
