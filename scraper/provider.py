@@ -1,4 +1,3 @@
-
 from typing import *
 from datetime import datetime
 
@@ -13,7 +12,6 @@ import sumy.utils
 
 
 class ArticleUrl(NamedTuple):
-
     id: str
     url: str
     language: str
@@ -21,7 +19,6 @@ class ArticleUrl(NamedTuple):
 
 
 class ArticleMetadata(NamedTuple):
-
     title: str = None
     authors: List[str] = None
     category: str = None
@@ -30,7 +27,6 @@ class ArticleMetadata(NamedTuple):
 
 
 class BaseProvider:
-
     def get_provider_id(self) -> str:
         raise NotImplementedError
 
@@ -68,9 +64,12 @@ class BaseProvider:
         summarizer.stop_wors = sumy.utils.get_stop_words(item.language)
         return ' '.join(map(str, summarizer(parser.document, SENTENCES_COUNT)))
 
+    def is_top_article(self, item: ArticleUrl, html: str,
+                       soup: bs4.BeautifulSoup) -> bool:
+        return False
+
 
 class RssProvider(BaseProvider):
-
     language_map = {
         'de': 'german',
         'de-AT': 'german',
@@ -91,9 +90,8 @@ class RssProvider(BaseProvider):
 
 
 class SueddeutscheZeitung(RssProvider):
-
-    FEED_URL = 'http://www.sueddeutsche.de/news/rss?search=Suchbegriff+eingeben'\
-               '&sort=date&all%5B%5D=dep&typ%5B%5D=article&sys%5B%5D=sz&sys%5B%'\
+    FEED_URL = 'http://www.sueddeutsche.de/news/rss?search=Suchbegriff+eingeben' \
+               '&sort=date&all%5B%5D=dep&typ%5B%5D=article&sys%5B%5D=sz&sys%5B%' \
                '5D=dpa&catsz%5B%5D=alles&catdpa%5B%5D=alles&time=P1D'
 
     def __init__(self):
@@ -133,7 +131,6 @@ class SueddeutscheZeitung(RssProvider):
 
 
 class DerStandard(RssProvider):
-
     FEED_URL = 'http://derStandard.at/?page=rss&ressort=Seite1'
 
     def __init__(self):
@@ -148,12 +145,12 @@ class DerStandard(RssProvider):
         article = Article(item.url)
         article.download(input_html=html)
         try:
-            import pdb; pdb.set_trace()
+            import pdb;
+            pdb.set_trace()
             article.parse(source='derStandard', soup=soup)
         except:
             traceback.print_exc()
             return ArticleMetadata()
-
 
         # Use page header to determine category.
         category = soup.find('div', id='pageTop') \
@@ -171,9 +168,9 @@ class DerStandard(RssProvider):
             keywords=article.keywords,
             date_published=date_published)
 
-#p = DerStandard()
-#import requests
-#html = requests.get('http://derstandard.at/2000068057992/Deutschland-Eltern-duerfen-ihre-Kinder-nicht-mehr-mittels-Smartwatch-abhoeren').text
-#soup = bs4.BeautifulSoup(html, 'lxml')
-#item = ArticleUrl('0', 'http://derstandard.at/2000068057992/Deutschland-Eltern-duerfen-ihre-Kinder-nicht-mehr-mittels-Smartwatch-abhoeren', 'de-AT', None)
-#p.get_article_metadata(item, html, soup)
+# p = DerStandard()
+# import requests
+# html = requests.get('http://derstandard.at/2000068057992/Deutschland-Eltern-duerfen-ihre-Kinder-nicht-mehr-mittels-Smartwatch-abhoeren').text
+# soup = bs4.BeautifulSoup(html, 'lxml')
+# item = ArticleUrl('0', 'http://derstandard.at/2000068057992/Deutschland-Eltern-duerfen-ihre-Kinder-nicht-mehr-mittels-Smartwatch-abhoeren', 'de-AT', None)
+# p.get_article_metadata(item, html, soup)

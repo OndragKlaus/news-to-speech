@@ -81,17 +81,17 @@ def delete_article_by_guid(guid, notexist_ok=False):
 
 
 def create_article(provider, category, guid, url, author, title,
-                   summary, date_published, date_summarized=None):
+                   summary, is_top_article, date_published, date_summarized):
     cur = conn.cursor()
     cur.execute("""
         INSERT INTO Article (
             provider_id, category_id, guid, url, author,
-            title, summary, date_published, date_summarized)
-        SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s
+            title, summary, is_top_article, date_published, date_summarized)
+        SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s %s
     """, (
         get_provider_id(provider, create=False),
         get_category_id(category, create=True),
-        guid, url, author, title, summary, date_published,
-        date_summarized)
+        guid, url, author, title, summary,
+        is_top_article, date_published, date_summarized)
     )
     conn.commit()

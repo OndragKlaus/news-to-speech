@@ -23,12 +23,12 @@ CREATE TABLE IF NOT EXISTS Article (
   article_id      BIGSERIAL PRIMARY KEY,
   provider_id     BIGSERIAL REFERENCES Provider (provider_id),
   category_id     BIGSERIAL REFERENCES Category (category_id),
-  guid            TEXT NOT NULL UNIQUE,
-  url             TEXT NOT NULL,
+  guid            TEXT    NOT NULL UNIQUE,
+  url             TEXT    NOT NULL,
   author          TEXT,
   title           TEXT,
   summary         TEXT,
-  is_top_article  BOOLEAN,
+  is_top_article  BOOLEAN NOT NULL DEFAULT FALSE,
   date_published  TIMESTAMP,
   date_summarized TIMESTAMP
 );
