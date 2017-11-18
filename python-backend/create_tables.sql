@@ -30,7 +30,8 @@ CREATE TABLE IF NOT EXISTS Article (
   summary         TEXT,
   is_top_article  BOOLEAN NOT NULL DEFAULT FALSE,
   date_published  TIMESTAMP,
-  date_summarized TIMESTAMP
+  date_summarized TIMESTAMP,
+  audioblob       BYTEA
 );
 
 CREATE TABLE IF NOT EXISTS ArticleToKeyword (
