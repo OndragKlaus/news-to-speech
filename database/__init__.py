@@ -87,7 +87,7 @@ def create_article(provider, category, guid, url, author, title,
         INSERT INTO Article (
             provider_id, category_id, guid, url, author,
             title, summary, is_top_article, date_published, date_summarized)
-        SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s %s
+        SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
     """, (
         get_provider_id(provider, create=False),
         get_category_id(category, create=True),

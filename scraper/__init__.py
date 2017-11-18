@@ -32,6 +32,10 @@ def get_article(provider, info):
     summary = provider.summarize_article(info, html, soup)
     is_top_article = provider.is_top_article(info, html, soup)
 
+    if not metadata:
+        logger.warn('NO METADATA {}'.format(info.url))
+        return
+
     # Ensure that the provider exists.
     database.get_provider_id(provider.get_provider_id(), create=True)
 

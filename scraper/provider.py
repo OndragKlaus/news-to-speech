@@ -41,7 +41,7 @@ class BaseProvider:
         raise NotImplementedError
 
     def get_article_metadata(self, item: ArticleUrl, html: str,
-                             soup: bs4.BeautifulSoup) -> ArticleMetadata:
+                             soup: bs4.BeautifulSoup) -> Optional[ArticleMetadata]:
         """
         Extract additional metadata from the article at the URL *url*. You
         get access to the pages' HTML content and the parsed BeautifulSoup
@@ -115,9 +115,7 @@ class RssProvider(BaseProvider):
 
 
 class SueddeutscheZeitung(RssProvider):
-    FEED_URL = 'http://www.sueddeutsche.de/news/rss?search=Suchbegriff+eingeben' \
-               '&sort=date&all%5B%5D=dep&typ%5B%5D=article&sys%5B%5D=sz&sys%5B%' \
-               '5D=dpa&catsz%5B%5D=alles&catdpa%5B%5D=alles&time=P1D'
+    FEED_URL = 'http://rss.sueddeutsche.de/rss/TopThemen'
 
     def __init__(self):
         super().__init__(self.FEED_URL)
@@ -126,7 +124,7 @@ class SueddeutscheZeitung(RssProvider):
         return 'de.sueddeutsche'
 
     def get_article_metadata(self, item: ArticleUrl, html: str,
-                             soup: bs4.BeautifulSoup) -> ArticleMetadata:
+                             soup: bs4.BeautifulSoup) -> Optional[ArticleMetadata]:
         from .article import Article
         from urllib.parse import urlparse
         import time
@@ -138,7 +136,11 @@ class SueddeutscheZeitung(RssProvider):
             article.parse(source='sz', soup=soup)
         except:
             traceback.print_exc()
-            return ArticleMetadata()
+            return None
+
+        # When there's almost no content, it may be an SZ Plus article.
+        if len(article.text) < 400:
+            return None
 
         # Determine the category name from the URL.
         category = urlparse(item.url).path.lstrip('/').partition('/')[0]
@@ -162,7 +164,7 @@ class DerStandard(RssProvider):
         super().__init__(self.FEED_URL)
 
     def get_article_metadata(self, item: ArticleUrl, html: str,
-                             soup: bs4.BeautifulSoup) -> ArticleMetadata:
+                             soup: bs4.BeautifulSoup) -> Optional[ArticleMetadata]:
         from .article import Article
         from urllib.parse import urlparse
         import traceback
@@ -175,7 +177,7 @@ class DerStandard(RssProvider):
             article.parse(source='derStandard', soup=soup)
         except:
             traceback.print_exc()
-            return ArticleMetadata()
+            return None
 
         # Use page header to determine category.
         category = soup.find('div', id='pageTop') \
