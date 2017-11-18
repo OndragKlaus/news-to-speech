@@ -9,6 +9,7 @@ import sumy.nlp.tokenizers
 import sumy.nlp.stemmers
 import sumy.summarizers.lsa
 import sumy.utils
+import xml.dom.minidom
 
 
 class ArticleUrl(NamedTuple):
@@ -81,9 +82,33 @@ class RssProvider(BaseProvider):
 
     def __init__(self, feed_url):
         self.feed_url = feed_url
+        self.last_modified = None
 
     def get_recent_article_urls(self) -> Iterable[ArticleUrl]:
-        feed = feedparser.parse(requests.get(self.feed_url).text)
+        response = requests.get(self.feed_url)
+        last_modified = None
+
+        # Check for the last modification date.
+        dom = xml.dom.minidom.parseString(response.text)
+        nodes = dom.getElementsByTagName('lastBuildDate')
+        if nodes:
+            last_modified = nodes[0].firstChild.nodeValue
+        if not last_modified:
+            nodes = dom.getElementsByTagName('pubDate')
+        if not last_modified and nodes:
+            last_modified = nodes[0].firstChild.nodeValue
+
+        # Otherwise, try to read it from the header.
+        if not last_modified:
+            last_modified = response.header.get('Last-Modified')
+
+        # Skip if it hasn't changed.
+        if last_modified and last_modified == self.last_modified:
+            return []
+        self.last_modified = last_modified
+
+        # Parse the feed.
+        feed = feedparser.parse(response.text)
         language = self.language_map[feed['feed']['language']]
         for entry in feed['entries']:
             yield ArticleUrl(entry['id'], entry['link'], language, data=entry)
