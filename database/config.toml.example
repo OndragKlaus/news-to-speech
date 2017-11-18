@@ -1,0 +1,7 @@
+# Example configuration file for the news scraper.
+
+[database]
+dbname = "nts"
+user = "nts"
+password = "???"
+host = "???"
