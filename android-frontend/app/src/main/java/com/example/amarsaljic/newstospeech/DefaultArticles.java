@@ -49,7 +49,7 @@ public class DefaultArticles {
                 if (nextLine[1].equals("de.sueddeutsche")) {
                     provider = "Süddeutsche";
                 } else {
-                    provider = "Süddeutsche";
+                    provider = "derStandard";
                 }
 
                 Date publishedDate = new Date();
