@@ -1,7 +1,7 @@
 
 .PHONY: scraper
 scraper:
-	python -c "import scraper; scraper.main()"
+	python -c "import backend.scraper; backend.scraper.main()"
 
 .PHONY: psql
 psql:
