@@ -67,4 +67,4 @@ def main():
                 get_article(provider, info)
         if args.once:
             break
-        time.sleep(5.0)
+        time.sleep(30.0)
