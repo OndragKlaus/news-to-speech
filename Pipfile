@@ -7,10 +7,10 @@ url = "https://pypi.python.org/simple"
 
 [packages]
 
-"newspaper3k" = "*"
-"beautifulsoup4" = "*"
+newspaper3k = "*"
+beautifulsoup4 = "*"
 feedparser = "*"
-"psycopg2" = "*"
+psycopg2 = "*"
 requests = "*"
 toml = "*"
 sumy = "*"
