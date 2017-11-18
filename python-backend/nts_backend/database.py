@@ -103,8 +103,9 @@ def get_articles(provider_id=None, category_id=None):
     cur.execute(sql, vars)
     return [article_id[0] for article_id in cur.fetchall()]
 
+
 def get_article_by_id(article_id):
     cur = conn.cursor()
-    cur.execute('SELECT * FROM Article WHERE article_id = %s', article_id)
+    cur.execute('SELECT * FROM Article WHERE article_id = %s', (article_id,))
     colnames = [desc[0] for desc in cur.description]
     return dict(zip(colnames, cur.fetchone()))
