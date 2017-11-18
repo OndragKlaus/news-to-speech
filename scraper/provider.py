@@ -22,6 +22,7 @@ class ArticleUrl(NamedTuple):
 
 class ArticleMetadata(NamedTuple):
 
+    title: str
     authors: List[str] = None
     category: str = None
     keywords: List[str] = None
@@ -123,6 +124,7 @@ class SueddeutscheZeitung(RssProvider):
         date_published = datetime.fromtimestamp(timestamp)
 
         return ArticleMetadata(
+            title=item.data['title'],
             authors=article.authors,
             category=category,
             keywords=article.keywords,
