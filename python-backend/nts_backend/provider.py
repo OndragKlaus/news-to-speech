@@ -36,6 +36,9 @@ class BaseProvider:
     def get_provider_id(self) -> str:
         raise NotImplementedError
 
+    def get_provider_pretty_name(self) -> str:
+        raise NotImplementedError
+
     def get_recent_article_urls(self) -> Iterable[ArticleUrl]:
         """
         Returns a list of recent articles that need to be parsed. The method
@@ -124,6 +127,9 @@ class SueddeutscheZeitung(RssProvider):
     def get_provider_id(self) -> str:
         return 'de.sueddeutsche'
 
+    def get_provider_pretty_name(self):
+        return 'Süddeutsche Zeitung'
+
     def get_article_metadata(self, item: ArticleUrl, html: str,
                              soup: bs4.BeautifulSoup) -> Optional[ArticleMetadata]:
         article = Article(item.url)
@@ -161,6 +167,9 @@ class DerStandard(RssProvider):
 
     def get_provider_id(self):
         return 'at.derstandard'
+
+    def get_provider_pretty_name(self):
+        return 'Der Standard'
 
     def get_article_metadata(self, item: ArticleUrl, html: str,
                              soup: bs4.BeautifulSoup) -> Optional[ArticleMetadata]:
