@@ -31,9 +31,4 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     compile 'com.microsoft.projectoxford:speechrecognition:1.2.2'
-    compile project(':aars')
 }
-
-ant.importBuild 'assets.xml'
-preBuild.dependsOn(list, checksum)
-clean.dependsOn(clean_assets)

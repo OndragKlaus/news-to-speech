@@ -10,4 +10,6 @@
     <string name="luisAppID">415a3ccb-2873-4efd-8ce7-417a0670febd</string>
     <string name="luisSubscriptionID">b4cd6f8ee7a1449eaa63ec348fc625f2</string>
     <string name="app_name">News To Speech</string>
+    <string name="use_speech_recognition">Use speech recognition</string>
+    <string name="search_for_articles">Search for articles</string>
 </resources>

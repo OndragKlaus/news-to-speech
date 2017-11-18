@@ -1,11 +1,11 @@
 package com.example.amarsaljic.newstospeech;
 
-import android.os.AsyncTask;
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 import org.json.*;
 
@@ -15,24 +15,11 @@ import com.microsoft.cognitiveservices.speechrecognition.MicrophoneRecognitionCl
 import com.microsoft.cognitiveservices.speechrecognition.RecognitionResult;
 import com.microsoft.cognitiveservices.speechrecognition.SpeechRecognitionServiceFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-
-import edu.cmu.pocketsphinx.Assets;
-import edu.cmu.pocketsphinx.Hypothesis;
-import edu.cmu.pocketsphinx.RecognitionListener;
-import edu.cmu.pocketsphinx.SpeechRecognizer;
-import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
-
-public class MainActivity extends AppCompatActivity implements ISpeechRecognitionServerEvents, RecognitionListener {
+public class MainActivity extends AppCompatActivity implements ISpeechRecognitionServerEvents {
 
     MicrophoneRecognitionClient micClient = null;
     TextView checkIntent;
-    SpeechRecognizer recognizer;
-    Button startSpeechRecognitionButton;
-    final String KEYPHRASE = "hey newton";
-    final String KWS_SEARCH = "wakeup";
+    MenuItem startSpeechRecognitionItem;
 
 
     @Override
@@ -41,14 +28,24 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
         setContentView(R.layout.activity_main);
 
         this.checkIntent = findViewById(R.id.check_intent);
-        this.startSpeechRecognitionButton = findViewById(R.id.start_speech_recognition_button);
-        startSpeechRecognitionButton.setOnClickListener(new View.OnClickListener() {
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.nts_menu, menu);
+        this.startSpeechRecognitionItem = menu.findItem(R.id.action_speech_recognition);
+        this.startSpeechRecognitionItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.ding);
+                mp.start();
                 startSpeechRecognition();
+                menuItem.setEnabled(false);
+                return true;
             }
         });
-        new SetupTask(this).execute();
+        return true;
     }
 
     // Functions relevant for Bing Speech API
@@ -123,6 +120,8 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
     public void onIntentReceived(String s) {
         this.micClient.endMicAndRecognition();
         try {
+            MediaPlayer mp = MediaPlayer.create(this, R.raw.dong);
+            mp.start();
             JSONObject intentResultAsJSON = new JSONObject(s.toString());
             JSONArray recognizedIntents = (JSONArray) intentResultAsJSON.get("intents");
             JSONObject highestRankedRecognizedIntent = recognizedIntents.getJSONObject(0);
@@ -131,8 +130,7 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
             this.checkIntent.setText(intentName);
             //TODO: Trigger function based on intent
             this.micClient.endMicAndRecognition();
-            this.startSpeechRecognitionButton.setVisibility(View.VISIBLE);
-            new SetupTask(this).execute();
+            this.startSpeechRecognitionItem.setEnabled(true);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -160,84 +158,5 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
 
     private void repeatArticle(){
 
-    }
-
-    // Functions for implementing the RecognizesListener Functions of pocketsphinx for hotword detection
-    private static class SetupTask extends AsyncTask<Void, Void, Exception> {
-        WeakReference<MainActivity> activityReference;
-        SetupTask(MainActivity activity) {
-            this.activityReference = new WeakReference<>(activity);
-        }
-        @Override
-        protected Exception doInBackground(Void... params) {
-            try {
-                Assets assets = new Assets(activityReference.get());
-                File assetDir = assets.syncAssets();
-                activityReference.get().setupRecognizer(assetDir);
-            } catch (IOException e) {
-                return e;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Exception result) {
-        }
-    }
-
-    private void setupRecognizer(File assetsDir) throws IOException {
-        // The recognizer can be configured to perform multiple searches
-        // of different kind and switch between them
-
-        this.recognizer = SpeechRecognizerSetup.defaultSetup()
-                .setAcousticModel(new File(assetsDir, "en-us-ptm"))
-                .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
-                .setKeywordThreshold((float)1e-18)
-                .getRecognizer();
-        this.recognizer.addListener(this);
-
-        /* In your application you might not need to add all those searches.
-          They are added here for demonstration. You can leave just one.
-         */
-
-        // Create keyword-activation search.
-        this.recognizer.addKeyphraseSearch(this.KWS_SEARCH, this.KEYPHRASE);
-        this.recognizer.startListening(this.KWS_SEARCH, 5000);
-    }
-
-    @Override
-    public void onBeginningOfSpeech() {
-
-    }
-
-    @Override
-    public void onEndOfSpeech() {
-        this.recognizer.stop();
-    }
-
-    @Override
-    public void onPartialResult(Hypothesis hypothesis) {
-
-    }
-
-    @Override
-    public void onResult(Hypothesis hypothesis) {
-        if(hypothesis != null){
-            if (hypothesis.getHypstr().toLowerCase().contains(this.KEYPHRASE.toLowerCase())){
-                this.startSpeechRecognitionButton.setVisibility(View.GONE);
-                this.recognizer.shutdown();
-                startSpeechRecognition();
-                return;
-            }
-        }
-        this.recognizer.startListening(this.KWS_SEARCH, 5000);
-    }
-
-    @Override
-    public void onError(Exception e) {
-
-    }
-
-    @Override
-    public void onTimeout() {
     }
 }
