@@ -1,7 +1,7 @@
 
 from typing import *
 from enum import Enum
-import cgi
+from .xmlbuilder import X
 import requests
 
 
@@ -105,6 +105,9 @@ class OutputFormat(Enum):
 
 class BingSpeechApi:
 
+    class SynthContentTooLarge(Exception):
+        pass
+
     def __init__(self, api_key, session=None):
         self.api_key = api_key
         self.token = None
@@ -124,20 +127,22 @@ class BingSpeechApi:
             'X-Microsoft-OutputFormat': format.value
         }
 
-        # Generate the XML request data.
-        template = "<speak version='1.0' xml:lang='{language}'>"\
-            "<voice xml:lang='{language}' xml:gender='{gender}' "\
-                    "name='Microsoft Server Speech Text to Speech Voice ({language}, {speaker})'>"\
-                "{text}"\
-            "</voice>"\
-        "</speak>"
-
-        xml = template.format(
-            language=cgi.escape(speaker.language),
-            gender=cgi.escape(speaker.gender),
-            speaker=cgi.escape(speaker.name),
-            text=cgi.escape(text)
+        name_template = 'Microsoft Server Speech Text to Speech Voice ({0}, {1})'
+        speak = X.speak(
+            {'xml:lang': speaker.language, 'version': '1.0'},
+            X.voice(
+                {
+                    'xml:lang': speaker.language,
+                    'xml:gender': speaker.gender,
+                    'name': name_template.format(speaker.language, speaker.name)
+                },
+                X.text(text)
+            )
         )
+        xml = speak.tostring()
+
+        if len(xml) > 1024:
+            raise SynthContentTooLarge(xml)
 
         # Issue the request.
         url = 'https://speech.platform.bing.com/synthesize'
