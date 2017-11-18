@@ -36,9 +36,12 @@ public class TabListActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+    private String[] providerNames;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.providerNames = this.getAllProviderNames();
         setContentView(R.layout.activity_tab_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -53,8 +56,17 @@ public class TabListActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
+        for (String providerName: providerNames){
+            tabLayout.addTab(tabLayout.newTab().setText(providerName));
+        }
+
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+    }
+
+    private String[] getAllProviderNames() {
+        // TODO: Implement!
+        return new String[]{"All", "Sueddeutsche", "Der Standard"};
     }
 
 
@@ -134,8 +146,7 @@ public class TabListActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            return providerNames.length;
         }
     }
 }
