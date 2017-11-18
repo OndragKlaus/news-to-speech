@@ -25,6 +25,7 @@ class ArticleMetadata(NamedTuple):
     category: str = None
     keywords: List[str] = None
     date_published: datetime = None
+    is_top_article: bool = False
 
 
 class BaseProvider:
@@ -64,10 +65,6 @@ class BaseProvider:
         summarizer = sumy.summarizers.lsa.LsaSummarizer(stemmer)
         summarizer.stop_wors = sumy.utils.get_stop_words(item.language)
         return ' '.join(map(str, summarizer(parser.document, SENTENCES_COUNT)))
-
-    def is_top_article(self, item: ArticleUrl, html: str,
-                       soup: bs4.BeautifulSoup) -> bool:
-        return False
 
 
 class RssProvider(BaseProvider):

@@ -30,7 +30,6 @@ def get_article(provider, info):
     soup = bs4.BeautifulSoup(html, 'lxml')
     metadata = provider.get_article_metadata(info, html, soup)
     summary = provider.summarize_article(info, html, soup)
-    is_top_article = provider.is_top_article(info, html, soup)
 
     if not metadata:
         logger.warn('NO METADATA {}'.format(info.url))
@@ -49,7 +48,7 @@ def get_article(provider, info):
             author = ';'.join(metadata.authors or []),  # XXX
             title = metadata.title,
             summary = summary,
-            is_top_article = is_top_article,
+            is_top_article = metadata.is_top_article,
             date_published = metadata.date_published,
             date_summarized = datetime.datetime.now()
         )
