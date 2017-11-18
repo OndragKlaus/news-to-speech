@@ -97,14 +97,20 @@ class SueddeutscheZeitung(RssProvider):
     def get_article_metadata(self, item: ArticleUrl, html: str,
                              soup: bs4.BeautifulSoup) -> ArticleMetadata:
         from .article import Article
+        from urllib.parse import urlparse
         import traceback
 
         article = Article(item.url)
         article.download(input_html=html)
         try:
-            article.parse()
+            article.parse(source='sz', soup=soup)
         except:
             traceback.print_exc()
             return ArticleMetadata()
 
-        return ArticleMetadata(authors=article.authors)
+        import pdb; pdb.set_trace()
+
+        # Determine the category name from the URL.
+        category = urlparse(item.url).path.lstrip('/').partition('/')[0]
+
+        return ArticleMetadata(authors=article.authors, category=category)

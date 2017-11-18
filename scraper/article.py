@@ -23,7 +23,7 @@ class Article(newspaper.Article):
         else:
             return soup.find_all('span', 'authors')
 
-    def parse(self, source=''):
+    def parse(self, source='', soup=None):
         super().parse()
         soup = BeautifulSoup(self.html, 'lxml')
         if source == 'sz':
