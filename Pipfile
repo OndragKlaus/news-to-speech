@@ -8,6 +8,7 @@ url = "https://pypi.python.org/simple"
 [packages]
 
 "newspaper3k" = "*"
+"beautifulsoup4" = "*"
 
 
 [requires]
