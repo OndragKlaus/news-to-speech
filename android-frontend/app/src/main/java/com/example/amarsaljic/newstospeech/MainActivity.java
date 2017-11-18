@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new SetupTask(this).execute();
         this.checkIntent = findViewById(R.id.check_intent);
         this.startSpeechRecognitionButton = findViewById(R.id.start_speech_recognition_button);
         startSpeechRecognitionButton.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
                 startSpeechRecognition();
             }
         });
+        new SetupTask(this).execute();
     }
 
     // Functions relevant for Bing Speech API
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
             //TODO: Trigger function based on intent
             this.micClient.endMicAndRecognition();
             this.startSpeechRecognitionButton.setVisibility(View.VISIBLE);
-            this.recognizer.startListening(this.KWS_SEARCH, 5000);
+            new SetupTask(this).execute();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -174,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
                 Assets assets = new Assets(activityReference.get());
                 File assetDir = assets.syncAssets();
                 activityReference.get().setupRecognizer(assetDir);
-                activityReference.get().recognizer.startListening(activityReference.get().KWS_SEARCH, 5000);
             } catch (IOException e) {
                 return e;
             }
@@ -192,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
         this.recognizer = SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(new File(assetsDir, "en-us-ptm"))
                 .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
+                .setKeywordThreshold((float)1e-18)
                 .getRecognizer();
         this.recognizer.addListener(this);
 
@@ -201,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
 
         // Create keyword-activation search.
         this.recognizer.addKeyphraseSearch(this.KWS_SEARCH, this.KEYPHRASE);
+        this.recognizer.startListening(this.KWS_SEARCH, 5000);
     }
 
     @Override
@@ -221,8 +222,9 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
     @Override
     public void onResult(Hypothesis hypothesis) {
         if(hypothesis != null){
-            if (hypothesis.getHypstr() == this.KEYPHRASE){
+            if (hypothesis.getHypstr().toLowerCase().contains(this.KEYPHRASE.toLowerCase())){
                 this.startSpeechRecognitionButton.setVisibility(View.GONE);
+                this.recognizer.shutdown();
                 startSpeechRecognition();
                 return;
             }
@@ -237,7 +239,5 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
 
     @Override
     public void onTimeout() {
-        this.recognizer.stop();
-        this.recognizer.startListening(this.KWS_SEARCH, 5000);
     }
 }
