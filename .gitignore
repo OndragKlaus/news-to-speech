@@ -1,6 +1,5 @@
 .idea
 .venv
-Pipfile.lock
 .vscode
 __pycache__
 .DS_Store
