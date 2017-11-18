@@ -1,5 +1,7 @@
 from typing import *
 from datetime import datetime
+from urllib.parse import urlparse
+from .article import Article
 
 import bs4
 import feedparser
@@ -9,6 +11,8 @@ import sumy.nlp.tokenizers
 import sumy.nlp.stemmers
 import sumy.summarizers.lsa
 import sumy.utils
+import time
+import traceback
 import xml.dom.minidom
 
 
@@ -122,11 +126,6 @@ class SueddeutscheZeitung(RssProvider):
 
     def get_article_metadata(self, item: ArticleUrl, html: str,
                              soup: bs4.BeautifulSoup) -> Optional[ArticleMetadata]:
-        from .article import Article
-        from urllib.parse import urlparse
-        import time
-        import traceback
-
         article = Article(item.url)
         article.download(input_html=html)
         try:
@@ -160,17 +159,14 @@ class DerStandard(RssProvider):
     def __init__(self):
         super().__init__(self.FEED_URL)
 
+    def get_provider_id(self):
+        return 'at.derstandard'
+
     def get_article_metadata(self, item: ArticleUrl, html: str,
                              soup: bs4.BeautifulSoup) -> Optional[ArticleMetadata]:
-        from .article import Article
-        from urllib.parse import urlparse
-        import traceback
-
         article = Article(item.url)
         article.download(input_html=html)
         try:
-            import pdb;
-            pdb.set_trace()
             article.parse(source='derStandard', soup=soup)
         except:
             traceback.print_exc()
@@ -191,10 +187,3 @@ class DerStandard(RssProvider):
             category=category,
             keywords=article.keywords,
             date_published=date_published)
-
-# p = DerStandard()
-# import requests
-# html = requests.get('http://derstandard.at/2000068057992/Deutschland-Eltern-duerfen-ihre-Kinder-nicht-mehr-mittels-Smartwatch-abhoeren').text
-# soup = bs4.BeautifulSoup(html, 'lxml')
-# item = ArticleUrl('0', 'http://derstandard.at/2000068057992/Deutschland-Eltern-duerfen-ihre-Kinder-nicht-mehr-mittels-Smartwatch-abhoeren', 'de-AT', None)
-# p.get_article_metadata(item, html, soup)
