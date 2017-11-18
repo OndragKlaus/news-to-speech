@@ -22,6 +22,7 @@ class ArticleUrl(NamedTuple):
 
 class ArticleMetadata(NamedTuple):
 
+    title: str
     authors: List[str] = None
     category: str = None
     keywords: List[str] = None
@@ -29,6 +30,9 @@ class ArticleMetadata(NamedTuple):
 
 
 class BaseProvider:
+
+    def get_provider_id(self) -> str:
+        raise NotImplementedError
 
     def get_recent_article_urls(self) -> Iterable[ArticleUrl]:
         """
@@ -95,10 +99,14 @@ class SueddeutscheZeitung(RssProvider):
     def __init__(self):
         super().__init__(self.FEED_URL)
 
+    def get_provider_id(self) -> str:
+        return 'de.sueddeutsche'
+
     def get_article_metadata(self, item: ArticleUrl, html: str,
                              soup: bs4.BeautifulSoup) -> ArticleMetadata:
         from .article import Article
         from urllib.parse import urlparse
+        import time
         import traceback
 
         article = Article(item.url)
@@ -109,12 +117,19 @@ class SueddeutscheZeitung(RssProvider):
             traceback.print_exc()
             return ArticleMetadata()
 
-        import pdb; pdb.set_trace()
-
         # Determine the category name from the URL.
         category = urlparse(item.url).path.lstrip('/').partition('/')[0]
 
-        return ArticleMetadata(authors=article.authors, category=category)
+        # Convert the time.struct_time to datetime.
+        timestamp = time.mktime(item.data['published_parsed'])
+        date_published = datetime.fromtimestamp(timestamp)
+
+        return ArticleMetadata(
+            title=item.data['title'],
+            authors=article.authors,
+            category=category,
+            keywords=article.keywords,
+            date_published=date_published)
 
 
 class DerStandard(RssProvider):
