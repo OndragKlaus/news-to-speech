@@ -46,7 +46,7 @@ public class DefaultArticles {
             String [] nextLine;
             while ((nextLine = reader.readNext()) != null) {
                 String provider;
-                if (nextLine[0].equals("de.sueddeutsche")) {
+                if (nextLine[1].equals("de.sueddeutsche")) {
                     provider = "Süddeutsche";
                 } else {
                     provider = "Süddeutsche";
@@ -59,10 +59,10 @@ public class DefaultArticles {
                     e.printStackTrace();
                 }
 
-                int mp3File = context.getResources().getIdentifier('a' + nextLine[7],
+                int mp3File = context.getResources().getIdentifier('a' + nextLine[0],
                         "raw", context.getPackageName());
-                Article a = new Article(provider, nextLine[1], nextLine[2], nextLine[3],
-                        nextLine[4], nextLine[5], publishedDate, mp3File);
+                Article a = new Article(provider, nextLine[2], nextLine[3], nextLine[4],
+                        nextLine[5], nextLine[6], publishedDate, mp3File);
                 articleList.add(a);
             }
         } catch (FileNotFoundException e) {

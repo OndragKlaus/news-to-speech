@@ -14,8 +14,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/bottom_panel"
-            android:background="#ffff0000">
+            android:layout_above="@+id/bottom_panel">
 
         </ScrollView>
 
@@ -28,6 +27,7 @@
             android:gravity="center_vertical">
 
             <ImageButton
+                android:id="@+id/replay"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -36,6 +36,7 @@
                 android:src="@drawable/ic_replay_10_black_48dp" />
 
             <ImageButton
+                android:id="@+id/previous"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -44,6 +45,7 @@
                 android:src="@drawable/ic_skip_previous_black_48dp" />
 
             <ImageButton
+                android:id="@+id/play"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -52,6 +54,7 @@
                 android:src="@drawable/ic_play_circle_filled_black_48dp" />
 
             <ImageButton
+                android:id="@+id/next"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -60,6 +63,7 @@
                 android:src="@drawable/ic_skip_next_black_48dp" />
 
             <ImageButton
+                android:id="@+id/star"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -77,15 +81,5 @@
     </RelativeLayout>
 
     <include layout="@layout/content_play" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@+id/relativeLayout"
-        app:layout_anchorGravity="right|center"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
 
 </android.support.design.widget.CoordinatorLayout>
