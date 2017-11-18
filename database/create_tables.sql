@@ -1,5 +1,6 @@
-DROP TABLE Provider;
 DROP TABLE Article;
+DROP TABLE Provider;
+DROP TABLE Category;
 
 
 CREATE TABLE IF NOT EXISTS Provider (
@@ -17,9 +18,10 @@ CREATE TABLE IF NOT EXISTS Article (
   provider_id     BIGSERIAL REFERENCES Provider (provider_id),
   category_id     BIGSERIAL REFERENCES Category (category_id),
   guid            TEXT NOT NULL UNIQUE,
+  url             TEXT NOT NULL,
   author          TEXT,
-  title           TEXT NOT NULL,
-  body            TEXT NOT NULL,
+  title           TEXT,
+  body            TEXT,
   summary         TEXT,
   last_modified   TIMESTAMP,
   last_summarized TIMESTAMP
