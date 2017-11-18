@@ -70,7 +70,7 @@ def main():
         logging.info('Exporting {} synthesized audio files to {}'.format(len(query), args.export_to))
         os.makedirs(args.export_to, exist_ok=True)
         for article in query:
-            filename = os.path.join(args.export_to, '{}.mp3'.format(article.article_id))
+            filename = os.path.join(args.export_to, 'a{}.mp3'.format(article.article_id))
             logging.info('  - {}'.format(filename))
             with open(filename, 'wb') as fp:
                 fp.write(article.audioblob)
