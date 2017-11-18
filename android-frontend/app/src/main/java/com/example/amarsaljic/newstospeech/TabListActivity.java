@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,12 +41,17 @@ public class TabListActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
-    private String[] providerNames;
+    private List<String> providerNames;
+    private List<Article> articleList;
+    static List<HashMap<String, List<Article>>> listSortedByProviderCategoryArticles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.articleList = this.getAllArticles();
         this.providerNames = this.getAllProviderNames();
+        this.listSortedByProviderCategoryArticles = this.getListOfProvidersWithCategoriesAndRelatedArticles();
+
         setContentView(R.layout.activity_tab_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -68,9 +74,53 @@ public class TabListActivity extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
     }
 
-    private String[] getAllProviderNames() {
-        // TODO: Implement!
-        return new String[]{"All", "Sueddeutsche", "Der Standard"};
+    private List<String> getAllProviderNames() {
+        List<String> providerNames = new ArrayList<>();
+        providerNames.add("All");
+        for (Article article : this.articleList) {
+            if(!providerNames.contains(article.provider_name)){
+                providerNames.add(article.provider_name);
+            }
+        }
+
+        return providerNames;
+    }
+
+    private List<Article> getAllArticles() {
+        DefaultArticles da = DefaultArticles.getInstance(this);
+        return da.articleList;
+    }
+
+    private List<HashMap<String, List<Article>>> getListOfProvidersWithCategoriesAndRelatedArticles(){
+        List<HashMap<String, List<Article>>> resultList = new ArrayList<>();
+
+        for (int i = 0; i < this.providerNames.size(); i++) {
+            resultList.add(new HashMap<String, List<Article>>());
+        }
+
+        for (Article article : this.articleList){
+            int indexOfProvider = providerNames.indexOf(article.provider_name);
+            String categoryOfArticle = article.category_name;
+
+            HashMap<String, List<Article>> providerHashmap = resultList.get(indexOfProvider);
+            if(providerHashmap.get(categoryOfArticle) == null){
+                providerHashmap.put(categoryOfArticle, new ArrayList<Article>());
+            }
+            List<Article> currentArticleListOfCategory = providerHashmap.get(categoryOfArticle);
+            currentArticleListOfCategory.add(article);
+            providerHashmap.put(categoryOfArticle, currentArticleListOfCategory);
+
+            // Also add in all provider!
+            HashMap<String, List<Article>> allHashmap = resultList.get(0);
+            if(allHashmap.get(categoryOfArticle) == null){
+                allHashmap.put(categoryOfArticle, new ArrayList<Article>());
+            }
+            List<Article> currentAllArticleListOfCategory = allHashmap.get(categoryOfArticle);
+            currentAllArticleListOfCategory.add(article);
+            allHashmap.put(categoryOfArticle, currentAllArticleListOfCategory);
+        }
+
+        return resultList;
     }
 
 
@@ -104,7 +154,7 @@ public class TabListActivity extends AppCompatActivity {
          * The fragment argument representing the section number for this
          * fragment.
          */
-        private static final String ARG_SECTION_NUMBER = "section_number";
+        private static int provider_id;
 
         public PlaceholderFragment() {
         }
@@ -116,7 +166,7 @@ public class TabListActivity extends AppCompatActivity {
         public static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            provider_id = sectionNumber;
             fragment.setArguments(args);
             return fragment;
         }
@@ -126,8 +176,8 @@ public class TabListActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_tab_list, container, false);
             ExpandableListView expandableListView = (ExpandableListView) rootView.findViewById(R.id.article_list_view);
-            HashMap<String, List<Article>> relevantArticlesSortedInCategories = getRelevantArticlesSortedInCategories(Integer.getInteger(ARG_SECTION_NUMBER));
-            List<String> availableCategories = getAvailableCategories(Integer.getInteger(ARG_SECTION_NUMBER));
+            HashMap<String, List<Article>> relevantArticlesSortedInCategories = getRelevantArticlesSortedInCategories(provider_id);
+            List<String> availableCategories = getAvailableCategories(provider_id);
             ArticleExpandableListAdapter expandableListAdapter = new ArticleExpandableListAdapter(getContext(), availableCategories, relevantArticlesSortedInCategories);
             expandableListView.setAdapter(expandableListAdapter);
             expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -141,11 +191,11 @@ public class TabListActivity extends AppCompatActivity {
         }
 
         private HashMap<String, List<Article>> getRelevantArticlesSortedInCategories(int argSectionNumber) {
-            return null;
+            return TabListActivity.listSortedByProviderCategoryArticles.get(argSectionNumber);
         }
 
         private List<String> getAvailableCategories(int argSectionNumber) {
-            return null;
+            return new ArrayList<>(TabListActivity.listSortedByProviderCategoryArticles.get(argSectionNumber).keySet());
         }
     }
 
@@ -168,7 +218,7 @@ public class TabListActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return providerNames.length;
+            return providerNames.size();
         }
     }
 }
