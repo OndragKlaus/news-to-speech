@@ -14,7 +14,7 @@ public class PlayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
-        final MediaPlayer example = MediaPlayer.create(PlayActivity.this, R.raw.a1);
+        final MediaPlayer example = MediaPlayer.create(PlayActivity.this, R.raw.a12);
 
         DefaultArticles da = DefaultArticles.getInstance(this);
 

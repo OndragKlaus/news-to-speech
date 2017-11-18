@@ -59,8 +59,8 @@ public class DefaultArticles {
                     e.printStackTrace();
                 }
 
-                int mp3File = context.getResources().getIdentifier(nextLine[7], "raw",
-                        context.getPackageName());
+                int mp3File = context.getResources().getIdentifier('a' + nextLine[7],
+                        "raw", context.getPackageName());
                 Article a = new Article(provider, nextLine[1], nextLine[2], nextLine[3],
                         nextLine[4], nextLine[5], publishedDate, mp3File);
                 articleList.add(a);
