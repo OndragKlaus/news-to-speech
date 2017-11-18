@@ -12,4 +12,5 @@
     <string name="app_name">News To Speech</string>
     <string name="use_speech_recognition">Use speech recognition</string>
     <string name="search_for_articles">Search for articles</string>
+    <string name="title_activity_play">PlayActivity</string>
 </resources>
