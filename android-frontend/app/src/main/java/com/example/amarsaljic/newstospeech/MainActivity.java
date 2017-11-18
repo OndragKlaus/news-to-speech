@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
     TextView checkIntent;
     MenuItem startSpeechRecognitionItem;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
