@@ -2,8 +2,6 @@ from bs4 import BeautifulSoup
 import newspaper
 import io
 
-import pdb
-
 
 class Article(newspaper.Article):
     def parse(self, source=''):
@@ -11,17 +9,16 @@ class Article(newspaper.Article):
         soup = BeautifulSoup(self.html, 'lxml')
         if source == 'sz':
             text_buf = io.StringIO()
-            pdb.set_trace()
-            for paragraph in soup.find('section', id='article-body').find_all('p', recursive=True):
+            for paragraph in soup.find('section', id='article-body').find_all('p', recursive=False):
                 text_buf.write(paragraph.text)
-                text_buf.write('\n')
+                text_buf.write('\n\n')
             self.text = text_buf.getvalue()
-            pdb.set_trace()
             text_buf.close()
+
+            author_section = soup.find('section', 'authors')
+            author_more_info = author_section.find('span', 'moreInfo')
+            self.authors = []
+            for author in author_more_info.find_all('span'):
+                self.authors.append(author.text)
         else:
             pass
-
-
-a = Article(url='http://www.sueddeutsche.de/panorama/russland-glamour-zu-vermieten-1.3752152')
-a.download()
-a.parse(source='sz')
