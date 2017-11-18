@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS Article (
   author          TEXT,
   title           TEXT,
   summary         TEXT,
+  is_top_article  BOOLEAN,
   date_published  TIMESTAMP,
   date_summarized TIMESTAMP
 );
