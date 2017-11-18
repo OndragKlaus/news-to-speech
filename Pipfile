@@ -13,7 +13,9 @@ feedparser = "*"
 "psycopg2" = "*"
 requests = "*"
 toml = "*"
-nltk = "*"
+sumy = "*"
+numpy = "*"
+
 
 [requires]
 
