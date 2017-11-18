@@ -8,3 +8,6 @@ host = "???"
 
 [bingspeechapi]
 key = "???"
+
+[linguisticsapi]
+key = "???"
