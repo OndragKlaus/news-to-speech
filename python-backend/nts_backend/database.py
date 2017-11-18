@@ -1,38 +1,26 @@
 
 import os
-import pathlib
 import psycopg2
 import subprocess
 import sys
 import toml
 
-conn = None
+from .config import config
 
-with open(pathlib.Path(__file__).parent.joinpath('config.toml')) as fp:
-    config = toml.load(fp)['database']
-    del fp
+conn = None
 
 
 def init():
     global conn
     if conn: return
-    conn = psycopg2.connect(**config)
-
-
-def create_tables():
-    init()
-    with open(pathlib.Path(__file__).parent.joinpath('create_tables.sql')) as fp:
-        stmts = fp.read().split(';')
-    cursor = conn.cursor()
-    for stmt in stmts:
-        if not stmt: continue
-        cursor.execute(stmt)
+    conn = psycopg2.connect(**config['database'])
 
 
 def psql():
-    cmd = ['psql', '-U', config['user'], '-d', config['dbname'], '-h', config['host']]
+    data = config['database']
+    cmd = ['psql', '-U', data['user'], '-d', data['dbname'], '-h', data['host']]
     env = os.environ.copy()
-    env['PGPASSWORD'] = config['password']
+    env['PGPASSWORD'] = data['password']
     subprocess.call(cmd + sys.argv[1:], env=env)
 
 
