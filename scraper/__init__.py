@@ -17,7 +17,6 @@ import database
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--once', action='store_true')
-parser.add_argument('--dry', action='store_true')
 
 providers = [
     SueddeutscheZeitung(),
