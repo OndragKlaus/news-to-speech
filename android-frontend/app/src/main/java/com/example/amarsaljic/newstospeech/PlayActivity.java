@@ -39,9 +39,10 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
     private boolean isStared;
     private MediaPlayer article_audio;
     private final Integer skipLength = 10000;
-    private final Integer previousReplaysLimit = 5000;
+    private final Integer previousReplaysLimit = 10000;
     private final Integer moveBackAfterPause = 2500;
     private Handler mHandler = new Handler();
+    private boolean pressedButton = false;
 
     MicrophoneRecognitionClient micClient = null;
     MenuItem startSpeechRecognitionItem;
@@ -81,12 +82,13 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // or list index == 0
-                if (article_audio.getCurrentPosition() > previousReplaysLimit) {
+                if (article_audio.getCurrentPosition() > previousReplaysLimit
+                        || index == 0) {
                     article_audio.seekTo(0);
                 } else {
-                    // play previous
-                    //seekBar.setMax(article_audio.getDuration() / 1000);
+                    index -= 1;
+                    pressedButton = true;
+                    playArticle();
                 }
             }
         });
@@ -114,7 +116,9 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
                 if (index == da.articleList.size() - 1){
                     article_audio.pause();
                 } else {
-
+                    index += 1;
+                    pressedButton = true;
+                    playArticle();
                 }
                 // if list index == list.length - 1 then stop else next
                 // seekBar.setMax(article_audio.getDuration() / 1000);
@@ -171,27 +175,44 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         article_audio.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                //if index == -1 then stop
-                if (index == da.articleList.size() - 1) {
-                    article_audio.pause();
-                } else {
-                    article_audio.reset();
-                    index +=1;
-                    article = da.articleList.get(index);
-                    String ghjk = "android.resouce://com.example.amarsaljic.newstospeech/";
-                    try {
-                        article_audio.setDataSource(PlayActivity.this, Uri.parse(ghjk + article.audio_file_id));
-                        article_audio.prepare();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                if (!pressedButton) {
+                    if (index == da.articleList.size() - 1) {
+                        article_audio.pause();
+                    } else {
+                        index += 1;
+                        playArticle();
                     }
-                    article_audio.start();
+                } else {
+                    pressedButton = false;
                 }
+            }
+        });
 
+        article_audio.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                article_audio.start();
+                seekBar.setMax(article_audio.getDuration() / 1000);
+                final ImageButton play = (ImageButton) findViewById(R.id.play);
+                play.setImageResource(R.drawable.ic_pause_circle_filled_black_48dp);
             }
         });
 
 
+    }
+
+    private void playArticle() {
+        article_audio.stop();
+        article_audio.reset();
+        article = da.articleList.get(index);
+        String ghjk = "android.resource://" + getPackageName() + "/raw/a";
+        try {
+            initArticleDescription();
+            article_audio.setDataSource(PlayActivity.this, Uri.parse(ghjk + article.article_id));
+            article_audio.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -219,6 +240,14 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         articleDateTV.setText(df.format(article.date_published));
         articleDateTV.setTextSize(17);
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        article_audio.pause();
+        final ImageButton play = (ImageButton) findViewById(R.id.play);
+        play.setImageResource(R.drawable.ic_play_circle_filled_black_48dp);
     }
 
     private void seekBackIfPossible(Integer seekBackTime) {
