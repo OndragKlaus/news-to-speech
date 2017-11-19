@@ -52,12 +52,12 @@ api.add_resource(Articles, '/articles')
 @orm.db_session
 def serve_audio_file(article_id):
     article = database.Article.get(article_id=article_id)
-    if article and article.audioblob:
+    if article and article.audio:
         headers = {
                 'Content-Type': 'audio/mp3',
                 'Content-Disposition': 'attachment; filename=article.mp3'
         }
-        response = flask.Response(response=article.audioblob, status=200, headers=headers)
+        response = flask.Response(response=article.audio.mp3data, status=200, headers=headers)
         return response
     else:
         flask.abort(404)

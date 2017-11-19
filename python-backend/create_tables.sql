@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS ArticleToKeyword;
-DROP TABLE IF EXISTS Article;
-DROP TABLE IF EXISTS Keyword;
-DROP TABLE IF EXISTS Category;
-DROP TABLE IF EXISTS Provider;
+-- DROP TABLE IF EXISTS ArticleToKeyword;
+-- DROP TABLE IF EXISTS Article;
+-- DROP TABLE IF EXISTS Keyword;
+-- DROP TABLE IF EXISTS Category;
+-- DROP TABLE IF EXISTS Provider;
 
 CREATE TABLE IF NOT EXISTS Provider (
   provider_id BIGSERIAL PRIMARY KEY,
@@ -31,8 +31,12 @@ CREATE TABLE IF NOT EXISTS Article (
   summary         TEXT,
   is_top_article  BOOLEAN NOT NULL DEFAULT FALSE,
   date_published  TIMESTAMP,
-  date_summarized TIMESTAMP,
-  audioblob       BYTEA
+  date_summarized TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS ArticleAudio (
+  article_id      BIGSERIAL REFERENCES Article (article_id) PRIMARY KEY,
+  mp3data         BYTEA
 );
 
 CREATE TABLE IF NOT EXISTS ArticleToKeyword (

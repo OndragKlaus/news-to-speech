@@ -81,4 +81,9 @@ class Article(db.Entity):
     is_top_article = orm.Optional(bool)
     date_published = orm.Optional(datetime)
     date_summarized = orm.Optional(datetime)
-    audioblob = orm.Optional(bytes, lazy=True)
+    audio = orm.Optional('ArticleAudio')
+
+
+class ArticleAudio(db.Entity):
+    article_id = orm.PrimaryKey(Article)
+    mp3data = orm.Required(bytes, lazy=True)

@@ -57,7 +57,8 @@ def synth_article(service: BingSpeechApi, tok: Tokenizer, article: database.Arti
         segments.append(audiofy(sentence))
 
     result = functools.reduce(operator.add, segments)
-    article.audioblob = audio_memory_export(result, format='mp3', bitrate='64')
+    data = audio_memory_export(result, format='mp3', bitrate='64')
+    article.audio = database.ArticleAudio(article_id=article, mp3data=data)
 
 
 def main():
@@ -67,14 +68,14 @@ def main():
 
     if args.export_to:
         logging.info('Querying...')
-        query = database.Article.select(lambda a: a.audioblob != None)  # XXX don't SELECT audioblob
+        query = database.Article.select(lambda a: a.audio != None)
         logging.info('Exporting {} synthesized audio files to {}'.format(len(query), args.export_to))
         os.makedirs(args.export_to, exist_ok=True)
         for article in query:
             filename = os.path.join(args.export_to, 'a{}.mp3'.format(article.article_id))
             logging.info('  - {}'.format(filename))
             with open(filename, 'wb') as fp:
-                fp.write(article.audioblob)
+                fp.write(article.audio.mp3data)
         return
 
     logging.info('Connecting to Bing Speech API ...')
@@ -85,7 +86,7 @@ def main():
     logging.info('Checking pending articles ...')
     while True:
         with orm.db_session():
-            query = database.Article.select(lambda a: a.audioblob == None)
+            query = database.Article.select(lambda a: a.audio == None)
             for article in query:
                 try:
                     synth_article(service, tok, article)
