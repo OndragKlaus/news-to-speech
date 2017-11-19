@@ -3,6 +3,10 @@ html {
   font-family: "Fira Sans", serif;
 }
 
+body {
+  padding-top: 8.5em;
+}
+
 #content li .thumb {
   display: none;
 }
@@ -44,4 +48,25 @@ html {
 
 #content li.article > ol {
   margin-top: 0;
+}
+
+#audio-bar {
+  margin-bottom: 1em;
+}
+
+#audio-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #3af;
+  right: 0;
+  padding: 0.5em 1em;
+  border-bottom: 1px solid #336588;
+  z-index: 100;
+  box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.5);
+}
+
+#audio-header #current {
+  margin: 1em 0;
+  display: block;
 }
