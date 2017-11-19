@@ -11,3 +11,6 @@ init_database()
 @db_session
 def index():
   return render_template('index.html', providers=Provider.select())
+
+
+

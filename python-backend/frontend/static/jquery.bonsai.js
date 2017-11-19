@@ -73,8 +73,9 @@
       if (this.options.checkboxes) this.el.qubit(this.options);
       if (this.options.addExpandAll) this.addExpandAllLink();
       if (this.options.addSelectAll) this.addSelectAllLink();
-      this.el.on('click', '.thumb', function(ev) {
+      this.el.on('click', 'label', function(ev) {
         self.toggle($(ev.currentTarget).closest('li'));
+        ev.preventDefault();
       });
     }
     if (this.options.expandAll) this.expandAll();
