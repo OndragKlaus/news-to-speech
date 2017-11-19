@@ -16,6 +16,7 @@ public class PlayActivity extends AppCompatActivity {
     private MediaPlayer article_audio;
     private final Integer skipLength = 10000;
     private final Integer previousReplaysLimit = 5000;
+    private final Integer moveBackAfterPause = 2500;
     private Handler mHandler = new Handler();
 
     @Override
@@ -38,13 +39,7 @@ public class PlayActivity extends AppCompatActivity {
         replay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // or list index == 0
-                Integer currentPosition = article_audio.getCurrentPosition();
-                if (currentPosition >= skipLength) {
-                    article_audio.seekTo(currentPosition - skipLength);
-                } else {
-                    article_audio.seekTo(0);
-                }
+                seekBackIfPossible(skipLength);
             }
         });
 
@@ -57,6 +52,7 @@ public class PlayActivity extends AppCompatActivity {
                     article_audio.seekTo(0);
                 } else {
                     // play previous
+                    //seekBar.setMax(article_audio.getDuration() / 1000);
                 }
             }
         });
@@ -70,6 +66,7 @@ public class PlayActivity extends AppCompatActivity {
                     //Integer l = article_audio.getCurrentPosition();
                     play.setImageResource(R.drawable.ic_play_circle_filled_black_48dp);
                 } else {
+                    seekBackIfPossible(moveBackAfterPause);
                     article_audio.start();
                     play.setImageResource(R.drawable.ic_pause_circle_filled_black_48dp);
                 }
@@ -81,6 +78,7 @@ public class PlayActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // if list index == list.length - 1 then stop else next
+                // seekBar.setMax(article_audio.getDuration() / 1000);
             }
         });
 
@@ -131,7 +129,25 @@ public class PlayActivity extends AppCompatActivity {
         });
 
 
+        article_audio.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                //if index == -1 then stop
+                article_audio.pause();
+            }
+        });
 
+    }
+
+    private void seekBackIfPossible(Integer seekBackTime) {
+        if (article_audio != null) {
+            Integer currentPosition = article_audio.getCurrentPosition();
+            if (currentPosition > seekBackTime) {
+                article_audio.seekTo(currentPosition - seekBackTime);
+            } else {
+                article_audio.seekTo(0);
+            }
+        }
     }
 
 }
