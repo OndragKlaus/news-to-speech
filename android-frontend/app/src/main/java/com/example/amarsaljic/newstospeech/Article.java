@@ -14,5 +14,17 @@ public class Article {
     String title;
     String summary;
     Date date_published;
-    int audio_file_id;
+    Integer audio_file_id;
+
+    public Article(String provider_name, String category_name, String url, String author,
+                   String title, String summary, Date date_published, Integer audio_file_id) {
+        this.provider_name = provider_name;
+        this.category_name = category_name;
+        this.url = url;
+        this.author = author;
+        this.title = title;
+        this.summary = summary;
+        this.date_published = date_published;
+        this.audio_file_id = audio_file_id;
+    }
 }

@@ -3,6 +3,7 @@
     <item android:id="@+id/overview" android:title="Overview"/>
     <item android:id="@+id/search" android:title="Search"/>
     <item android:id="@+id/settings" android:title="Settings"/>
+    <item android:id="@+id/play" android:title="Play"/>
     <item android:id="@+id/help" android:title="Help"/>
     <item android:id="@+id/logout" android:title="Logout"/>
 

@@ -1,0 +1,47 @@
+
+html {
+  font-family: "Fira Sans", serif;
+}
+
+#content li .thumb {
+  display: none;
+}
+
+#content li.provider {
+  background-color: #eee;
+  border-radius: 5px;
+  margin-bottom: 1em;
+  padding: 1em;
+}
+
+#content li.provider > label {
+  font-size: 200%;
+}
+
+#content li.provider ol {
+  margin-top: 1em;
+}
+
+#content li.category {
+  padding-bottom: 1em;
+}
+
+#content li.category > label {
+  font-size: 150%;
+}
+
+#content li.article > label {
+  line-height: 150%;
+}
+
+#content li.summary {
+  margin: 1em 1em;
+}
+
+#content li.article ol li input {
+  display: none;
+}
+
+#content li.article > ol {
+  margin-top: 0;
+}

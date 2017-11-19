@@ -105,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
             case R.id.help:
                 fragmentClass = HelpFragment.class;
                 break;
+            case R.id.play:
+                fragmentClass = PlayFragment.class;
+                break;
             default:
                 fragmentClass = HelpFragment.class;
         }

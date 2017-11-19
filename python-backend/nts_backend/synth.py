@@ -37,27 +37,26 @@ def audio_memory_export(segment, *args, **kwargs):
                 pass
 
 
-def synth_article(service: BingSpeechApi, tok: Tokenizer, article: dict) -> bytes:
+def synth_article(service: BingSpeechApi, tok: Tokenizer, article: database.Article) -> bytes:
     """
     Generates an MP3 audio file for the specified title and text.
     """
 
-    logging.info('SYNTHESIZING {} -- {}'.format(article['article_id'], article['url']))
+    logging.info('SYNTHESIZING {} -- {}'.format(article.article_id, article.url))
 
     speaker = next(x for x in Speaker.ALL if x.name == 'HeddaRUS')
     def audiofy(text):
         return pydub.AudioSegment.from_mp3(io.BytesIO(service.synth(text, speaker)))
 
     segments = []
-    segments.append(audiofy('Artikel: ' + article['title']))
-    print('TITLE:', article['title'])
-    for sentence in tokens_to_sentences(tok.tokenize('Zusammenfassung: ' + article['summary'], 'en')):  # XXX en?
+    segments.append(audiofy('Artikel: ' + article.title))
+    print('TITLE:', article.title)
+    for sentence in tokens_to_sentences(tok.tokenize('Zusammenfassung: ' + article.summary, 'en')):  # XXX en?
         print('  *', sentence)
         segments.append(audiofy(sentence))
 
     result = functools.reduce(operator.add, segments)
-    audioblob = audio_memory_export(result, format='mp3', bitrate='64')
-    database.save_article_audioblob(article['article_id'], audioblob)
+    article.audioblob = audio_memory_export(result, format='mp3', bitrate='64')
 
 
 def main():
@@ -66,15 +65,15 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     if args.export_to:
-        ids = database.get_articles(has_audioblob=True)
-        logging.info('Exporting {} synthesized audio files to {}'.format(len(ids), args.export_to))
+        logging.info('Querying...')
+        query = database.Article.select(lambda a: a.audioblob != None)  # XXX don't SELECT audioblob
+        logging.info('Exporting {} synthesized audio files to {}'.format(len(query), args.export_to))
         os.makedirs(args.export_to, exist_ok=True)
-        for article_id in ids:
-            audiodata = database.get_article_audioblob(article_id)
-            filename = os.path.join(args.export_to, '{}.mp3'.format(article_id))
+        for article in query:
+            filename = os.path.join(args.export_to, 'a{}.mp3'.format(article.article_id))
             logging.info('  - {}'.format(filename))
             with open(filename, 'wb') as fp:
-                fp.write(audiodata)
+                fp.write(article.audioblob)
         return
 
     logging.info('Connecting to Bing Speech API ...')
@@ -84,10 +83,11 @@ def main():
 
     logging.info('Checking pending articles ...')
     while True:
-        for article_id in database.get_articles(has_audioblob=False):
-            article = database.get_article_by_id(article_id)
+        query = database.Article.select(lambda a: a.audioblob == None)
+        for article in query:
             try:
-                synth_article(service, tok, article)
+                with database.orm.db_session():
+                    synth_article(service, tok, article)
             except Exception as exc:
                 logging.exception(exc)
         if args.once:

@@ -6,7 +6,8 @@ DROP TABLE IF EXISTS Provider;
 
 CREATE TABLE IF NOT EXISTS Provider (
   provider_id BIGSERIAL PRIMARY KEY,
-  name        TEXT NOT NULL UNIQUE
+  name        TEXT NOT NULL UNIQUE,
+  pretty_name TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Category (

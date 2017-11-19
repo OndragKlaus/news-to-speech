@@ -22,7 +22,11 @@
         <activity
             android:name=".TabListActivity"
             android:label="@string/title_activity_tab_list"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".PlayActivity"
+            android:label="@string/title_activity_play"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

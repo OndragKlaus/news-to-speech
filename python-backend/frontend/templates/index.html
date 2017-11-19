@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title or "News to Speech" }}</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='jquery.qubit.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery.bonsai.js') }}"></script>
+    <link href="{{ url_for('static', filename='jQuery.AudioPlayer.css') }}" rel="stylesheet"/>
+    <script src="{{ url_for('static', filename='jQuery.AudioPlayer.js') }}"></script>
+    <link href="{{ url_for('static', filename='jquery.bonsai.css') }}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
+  </head>
+  <body>
+    <div id="audio-bar"></div>
+    <script>
+      function playArticleAudio(article_id) {
+        let url = '/audiofile/' + article_id;
+        $.AudioPlayer.updateSource({source: url});
+        $.AudioPlayer.play();
+      }
+    </script>
+    <ol id="content">
+      {% for provider in providers %}
+        <li class="expanded provider">
+          {{ provider.pretty_name }}
+          <ol>
+            {% for category in provider.query_categories() %}
+              {% set articles = category.articles_for_provider(provider) %}
+              <li class="category">
+                {{ category.name.capitalize() }} ({{ articles|length }})
+                <ol>
+                  {% for article in articles %}
+                    <li class="article" data-id="{{ article.article_id }}">
+                      {{ article.title }}
+                      <ol>
+                        <li class="summary">{{ article.summary }}</li>
+                        <li class="play"><button onclick="playArticleAudio(this.getAttribute('data-id'))" data-id="{{ article.article_id }}">Play</button></li>
+                      </ol>
+                    </li>
+                  {% endfor %}
+                </ol>
+              </li>
+            {% endfor %}
+          </ol>
+        </li>
+      {% endfor %}
+    </ol>
+    <script>
+      $.AudioPlayer.init({
+        container: '#audio-bar',
+        allowSeek: false,
+        imagePath: '/static/image'
+      });
+      $('#content').bonsai({
+        expandAll: false,
+        checkboxes: true, // depends on jquery.qubit plugin
+        createInputs: 'checkbox' // takes values from data-name and data-value, and data-name is inherited
+      });
+    </script>
+  </body>
+</html>
