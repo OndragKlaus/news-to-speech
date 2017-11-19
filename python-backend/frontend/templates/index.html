@@ -5,17 +5,19 @@
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='jquery.qubit.js') }}"></script>
     <script src="{{ url_for('static', filename='jquery.bonsai.js') }}"></script>
+    <link href="{{ url_for('static', filename='jQuery.AudioPlayer.css') }}" rel="stylesheet"/>
+    <script src="{{ url_for('static', filename='jQuery.AudioPlayer.js') }}"></script>
     <link href="{{ url_for('static', filename='jquery.bonsai.css') }}" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
   </head>
   <body>
+    <div id="audio-bar"></div>
     <script>
-      let audio = null;
       function playArticleAudio(article_id) {
         let url = '/audiofile/' + article_id;
-        audio = new Audio(url);
-        audio.play();
+        $.AudioPlayer.updateSource({source: url});
+        $.AudioPlayer.play();
       }
     </script>
     <ol id="content">
@@ -45,6 +47,11 @@
       {% endfor %}
     </ol>
     <script>
+      $.AudioPlayer.init({
+        container: '#audio-bar',
+        allowSeek: false,
+        imagePath: '/static/image'
+      });
       $('#content').bonsai({
         expandAll: false,
         checkboxes: true, // depends on jquery.qubit plugin
