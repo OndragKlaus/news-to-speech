@@ -378,15 +378,17 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
                     toastIt("Playing the next article.");
                     ImageButton button = (ImageButton) findViewById(R.id.next);
                     button.performClick();
+                    article_audio.start();
                     break;
                 case "Previous_article":
                     ImageButton button2 = (ImageButton) findViewById(R.id.previous);
                     button2.performClick();
                     toastIt("Playing the previous article.");
+                    article_audio.start();
                     break;
                 case "repeat_article":
-                    ImageButton button3 = (ImageButton) findViewById(R.id.next);
-                    button3.performClick();
+                    article_audio.seekTo(0);
+                    article_audio.start();
                     toastIt("Repeat the article.");
                     break;
                 default:
