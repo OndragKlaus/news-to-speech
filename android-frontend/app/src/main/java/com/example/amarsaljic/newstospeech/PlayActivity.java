@@ -1,11 +1,13 @@
 package com.example.amarsaljic.newstospeech;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,11 +44,14 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
 
+        // Intent intent = getIntent();
+        // int index = intent.getIntExtra("index", 0);
+
         isStared = false;
         final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
 
         DefaultArticles da = DefaultArticles.getInstance(this);
-        this.article = da.articleList.get(0);
+        this.article = da.articleList.get(16);
         article_audio = MediaPlayer.create(PlayActivity.this, this.article.audio_file_id);
         seekBar.setMax(article_audio.getDuration() / 1000);
 
@@ -270,7 +275,13 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
             Log.i("Intent: ", intentName);
             switch (intentName) {
                 case "Next_article":
-                    Toast.makeText(this, "Playing next article...", Toast.LENGTH_LONG).show();
+                    toastIt("Playing the next article.");
+                    break;
+                case "Previous_article":
+                    toastIt("Playing the previous article.");
+                    break;
+                case "repeat_article":
+                    toastIt("Repeat the article.");
                     break;
                 default:
                     break;
@@ -280,6 +291,12 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void toastIt(String toastMessage){
+        Toast toast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 
     @Override
