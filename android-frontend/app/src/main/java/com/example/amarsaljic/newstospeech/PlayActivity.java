@@ -28,6 +28,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class PlayActivity extends AppCompatActivity  implements ISpeechRecognitionServerEvents{
 
@@ -70,6 +72,8 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
                 seekBackIfPossible(skipLength);
             }
         });
+
+        this.initArticleDescription();
 
         final ImageButton previous = (ImageButton) findViewById(R.id.previous);
         previous.setOnClickListener(new View.OnClickListener() {
@@ -207,6 +211,25 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         article_audio.start();
         final ImageButton play = (ImageButton) findViewById(R.id.play);
         play.setImageResource(R.drawable.ic_pause_circle_filled_black_48dp);
+    }
+
+    private void initArticleDescription() {
+        ImageView articleCoverIV = findViewById(R.id.article_cover);
+        articleCoverIV.setImageResource(R.drawable.newtospeech2);
+
+        TextView articleTitleTV = findViewById(R.id.article_title);
+        articleTitleTV.setText(article.title);
+        articleTitleTV.setTextSize(20);
+
+        TextView articleProviderTV = findViewById(R.id.article_provider);
+        articleProviderTV.setText(article.provider_name);
+        articleProviderTV.setTextSize(17);
+
+        TextView articleDateTV = findViewById(R.id.article_date);
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        articleDateTV.setText(df.format(article.date_published));
+        articleDateTV.setTextSize(17);
+
     }
 
     @Override
