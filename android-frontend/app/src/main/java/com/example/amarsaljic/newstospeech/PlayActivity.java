@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,9 +38,10 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
     private boolean isStared;
     private MediaPlayer article_audio;
     private final Integer skipLength = 10000;
-    private final Integer previousReplaysLimit = 5000;
+    private final Integer previousReplaysLimit = 10000;
     private final Integer moveBackAfterPause = 2500;
     private Handler mHandler = new Handler();
+    private boolean pressedButton = false;
 
     MicrophoneRecognitionClient micClient = null;
     MenuItem startSpeechRecognitionItem;
@@ -84,6 +86,7 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
                     article_audio.seekTo(0);
                 } else {
                     index -= 1;
+                    pressedButton = true;
                     playArticle();
                 }
             }
@@ -113,6 +116,7 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
                     article_audio.pause();
                 } else {
                     index += 1;
+                    pressedButton = true;
                     playArticle();
                 }
                 // if list index == list.length - 1 then stop else next
@@ -170,11 +174,15 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         article_audio.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                if (index == da.articleList.size() - 1) {
-                    article_audio.pause();
+                if (!pressedButton) {
+                    if (index == da.articleList.size() - 1) {
+                        article_audio.pause();
+                    } else {
+                        index += 1;
+                        playArticle();
+                    }
                 } else {
-                    index += 1;
-                    playArticle();
+                    pressedButton = false;
                 }
             }
         });
@@ -198,6 +206,7 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         article = da.articleList.get(index);
         String ghjk = "android.resource://" + getPackageName() + "/raw/a";
         try {
+            initArticleDescription();
             article_audio.setDataSource(PlayActivity.this, Uri.parse(ghjk + article.article_id));
             article_audio.prepareAsync();
         } catch (IOException e) {
