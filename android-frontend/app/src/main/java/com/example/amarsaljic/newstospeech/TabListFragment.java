@@ -96,7 +96,6 @@ public class TabListFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_parent_tablist, container, false);
 
-
         this.articleList = this.getAllArticles();
         this.providerNames = this.getAllProviderNames();
         this.listSortedByProviderCategoryArticles = this.getListOfProvidersWithCategoriesAndRelatedArticles();
@@ -121,7 +120,6 @@ public class TabListFragment extends Fragment {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-
 
         return v;
     }

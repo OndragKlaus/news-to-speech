@@ -245,6 +245,14 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
                 mp.start();
                 startSpeechRecognition();
                 menuItem.setEnabled(false);
+
+                ImageButton play = (ImageButton) findViewById(R.id.play);
+                if (article_audio.isPlaying()) {
+                    article_audio.pause();
+                    //Integer l = article_audio.getCurrentPosition();
+                    play.setImageResource(R.drawable.ic_play_circle_filled_black_48dp);
+                }
+
                 return true;
             }
         });
@@ -339,11 +347,17 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
             switch (intentName) {
                 case "Next_article":
                     toastIt("Playing the next article.");
+                    ImageButton button = (ImageButton) findViewById(R.id.next);
+                    button.performClick();
                     break;
                 case "Previous_article":
+                    ImageButton button2 = (ImageButton) findViewById(R.id.previous);
+                    button2.performClick();
                     toastIt("Playing the previous article.");
                     break;
                 case "repeat_article":
+                    ImageButton button3 = (ImageButton) findViewById(R.id.next);
+                    button3.performClick();
                     toastIt("Repeat the article.");
                     break;
                 default:
