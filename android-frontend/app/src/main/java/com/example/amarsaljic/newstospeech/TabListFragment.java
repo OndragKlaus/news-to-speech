@@ -101,15 +101,15 @@ public class TabListFragment extends Fragment {
         this.providerNames = this.getAllProviderNames();
         this.listSortedByProviderCategoryArticles = this.getListOfProvidersWithCategoriesAndRelatedArticles();
 
-
-
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(myContext.getSupportFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) v.findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        mViewPager.setCurrentItem(0);
 
         tabLayout = (TabLayout) v.findViewById(R.id.tabs);
 
