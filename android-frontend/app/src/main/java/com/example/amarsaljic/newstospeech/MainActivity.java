@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         FragmentManager manager = getSupportFragmentManager();
         try{
-            manager.beginTransaction().replace(R.id.mycontainer, HelpFragment.class.newInstance()).addToBackStack(null).commit();
+            manager.beginTransaction().replace(R.id.mycontainer, TabListFragment.class.newInstance()).addToBackStack(null).commit();
         }catch (Exception e){
             e.printStackTrace();
         }
