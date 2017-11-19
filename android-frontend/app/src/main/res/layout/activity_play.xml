@@ -15,8 +15,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/bottom_panel">
-
         </ScrollView>
+
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_above="@id/bottom_panel"/>
 
         <LinearLayout
             android:id="@+id/bottom_panel"
