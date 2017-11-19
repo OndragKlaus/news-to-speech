@@ -169,19 +169,28 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
                 if (index == da.articleList.size() - 1) {
                     article_audio.pause();
                 } else {
+                    article_audio.stop();
                     article_audio.reset();
                     index +=1;
                     article = da.articleList.get(index);
-                    String ghjk = "android.resouce://com.example.amarsaljic.newstospeech/";
+                    String ghjk = "android.resource://" + getPackageName() + "/raw/a";
                     try {
-                        article_audio.setDataSource(PlayActivity.this, Uri.parse(ghjk + article.audio_file_id));
-                        article_audio.prepare();
+                        article_audio.setDataSource(PlayActivity.this, Uri.parse(ghjk + article.article_id));
+                        article_audio.prepareAsync();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    article_audio.start();
                 }
 
+            }
+        });
+
+        article_audio.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                article_audio.start();;
+                final ImageButton play = (ImageButton) findViewById(R.id.play);
+                play.setImageResource(R.drawable.ic_pause_circle_filled_black_48dp);
             }
         });
 
@@ -194,6 +203,14 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         article_audio.start();
         final ImageButton play = (ImageButton) findViewById(R.id.play);
         play.setImageResource(R.drawable.ic_pause_circle_filled_black_48dp);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        article_audio.pause();
+        final ImageButton play = (ImageButton) findViewById(R.id.play);
+        play.setImageResource(R.drawable.ic_play_circle_filled_black_48dp);
     }
 
     private void seekBackIfPossible(Integer seekBackTime) {
