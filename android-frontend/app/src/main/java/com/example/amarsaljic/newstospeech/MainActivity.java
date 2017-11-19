@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
 
         switch (item.getItemId()){
             case R.id.overview:
-                fragmentClass = OverviewFragment.class;
+                fragmentClass = TabListFragment.class;
                 break;
             case R.id.settings:
                 fragmentClass = SettingsFragment.class;
