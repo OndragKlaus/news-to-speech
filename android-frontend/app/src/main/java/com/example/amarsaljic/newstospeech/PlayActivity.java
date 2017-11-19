@@ -185,6 +185,15 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
             }
         });
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        article_audio.start();
+        final ImageButton play = (ImageButton) findViewById(R.id.play);
+        play.setImageResource(R.drawable.ic_pause_circle_filled_black_48dp);
     }
 
     private void seekBackIfPossible(Integer seekBackTime) {
