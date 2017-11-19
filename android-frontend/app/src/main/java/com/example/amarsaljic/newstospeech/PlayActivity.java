@@ -375,6 +375,7 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         switch (item.getItemId()) {
             case android.R.id.home:
                 // app icon in action bar clicked; goto parent activity.
+                article_audio.pause();
                 this.finish();
                 return true;
             default:
