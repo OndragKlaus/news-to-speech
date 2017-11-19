@@ -1,6 +1,7 @@
 <resources>
     <string name="primaryKey">caeb45792ad34f9db4ad1c720f7f9c6e</string>
-
+    <string name="open">Open</string>
+    <string name="close">Close</string>
     <!--
     Enter an optional authentication Uri for Bing Speech API such as:
     https://westus.api.cognitive.microsoft.com/sts/v1.0/issuetoken
@@ -19,4 +20,6 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_play">PlayActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
 </resources>
