@@ -88,10 +88,12 @@ public class PlayActivity extends AppCompatActivity {
         star.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isStared) {
+                if (!isStared) {
                     star.setImageResource(R.drawable.ic_star_black_48dp);
+                    star.setColorFilter(getResources().getColor(R.color.colorAccent));
                 } else {
                     star.setImageResource(R.drawable.ic_star_border_black_48dp);
+                    star.setColorFilter(getResources().getColor(R.color.grey));
                 }
                 isStared = !isStared;
             }
@@ -127,6 +129,9 @@ public class PlayActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+
     }
 
 }
