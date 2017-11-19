@@ -2,6 +2,7 @@ package com.example.amarsaljic.newstospeech;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -26,6 +27,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 public class PlayActivity extends AppCompatActivity  implements ISpeechRecognitionServerEvents{
 
     private Article article;
@@ -38,6 +41,8 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
 
     MicrophoneRecognitionClient micClient = null;
     MenuItem startSpeechRecognitionItem;
+    private int index = 16;
+    DefaultArticles da = DefaultArticles.getInstance(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +55,8 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         isStared = false;
         final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
 
-        DefaultArticles da = DefaultArticles.getInstance(this);
-        this.article = da.articleList.get(16);
+
+        this.article = da.articleList.get(index);
         article_audio = MediaPlayer.create(PlayActivity.this, this.article.audio_file_id);
         seekBar.setMax(article_audio.getDuration() / 1000);
 
@@ -100,6 +105,11 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (index == da.articleList.size() - 1){
+                    article_audio.pause();
+                } else {
+
+                }
                 // if list index == list.length - 1 then stop else next
                 // seekBar.setMax(article_audio.getDuration() / 1000);
             }
@@ -156,7 +166,22 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
             @Override
             public void onCompletion(MediaPlayer mp) {
                 //if index == -1 then stop
-                article_audio.pause();
+                if (index == da.articleList.size() - 1) {
+                    article_audio.pause();
+                } else {
+                    article_audio.reset();
+                    index +=1;
+                    article = da.articleList.get(index);
+                    String ghjk = "android.resouce://com.example.amarsaljic.newstospeech/";
+                    try {
+                        article_audio.setDataSource(PlayActivity.this, Uri.parse(ghjk + article.audio_file_id));
+                        article_audio.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    article_audio.start();
+                }
+
             }
         });
 
