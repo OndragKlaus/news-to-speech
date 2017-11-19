@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,6 +71,8 @@ public class TabListActivity extends AppCompatActivity {
             tabLayout.addTab(tabLayout.newTab().setText(providerName));
         }
 
+        Log.i("Tab Count: ", Integer.toString(tabLayout.getTabCount()));
+
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
     }
@@ -101,6 +104,7 @@ public class TabListActivity extends AppCompatActivity {
         for (Article article : this.articleList){
             int indexOfProvider = providerNames.indexOf(article.provider_name);
             String categoryOfArticle = article.category_name;
+            categoryOfArticle = categoryOfArticle.substring(0, 1).toUpperCase() + categoryOfArticle.substring(1);
 
             HashMap<String, List<Article>> providerHashmap = resultList.get(indexOfProvider);
             if(providerHashmap.get(categoryOfArticle) == null){
@@ -176,26 +180,33 @@ public class TabListActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_tab_list, container, false);
             ExpandableListView expandableListView = (ExpandableListView) rootView.findViewById(R.id.article_list_view);
-            HashMap<String, List<Article>> relevantArticlesSortedInCategories = getRelevantArticlesSortedInCategories(provider_id);
-            List<String> availableCategories = getAvailableCategories(provider_id);
+            HashMap<String, List<Article>> relevantArticlesSortedInCategories = getRelevantArticlesSortedInCategories(this.provider_id);
+            List<String> availableCategories = getAvailableCategories(this.provider_id);
             ArticleExpandableListAdapter expandableListAdapter = new ArticleExpandableListAdapter(getContext(), availableCategories, relevantArticlesSortedInCategories);
             expandableListView.setAdapter(expandableListAdapter);
             expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
                 @Override
                 public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
                     // TODO: Open DetailView!
+                    List<Article>  listOfArticlesInsideCategory = null;
                     return false;
                 }
             });
+
+            for (int i = 0; i < availableCategories.size(); i++) {
+                expandableListView.expandGroup(i);
+            }
             return rootView;
         }
 
         private HashMap<String, List<Article>> getRelevantArticlesSortedInCategories(int argSectionNumber) {
-            return TabListActivity.listSortedByProviderCategoryArticles.get(argSectionNumber);
+            HashMap<String, List<Article>> categoriesWithArticles = TabListActivity.listSortedByProviderCategoryArticles.get(argSectionNumber);
+            return categoriesWithArticles;
         }
 
         private List<String> getAvailableCategories(int argSectionNumber) {
-            return new ArrayList<>(TabListActivity.listSortedByProviderCategoryArticles.get(argSectionNumber).keySet());
+            List<String> availableCategories = new ArrayList<>(TabListActivity.listSortedByProviderCategoryArticles.get(argSectionNumber).keySet());
+            return availableCategories;
         }
     }
 

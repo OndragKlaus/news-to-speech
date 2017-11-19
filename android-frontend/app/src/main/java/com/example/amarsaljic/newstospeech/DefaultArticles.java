@@ -54,7 +54,7 @@ public class DefaultArticles {
 
                 Date publishedDate = new Date();
                 try {
-                    publishedDate = format.parse(nextLine[6]);
+                    publishedDate = format.parse(nextLine[7]);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
