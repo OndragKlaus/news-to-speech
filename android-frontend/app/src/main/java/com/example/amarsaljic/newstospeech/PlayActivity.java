@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -38,9 +39,10 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
     private boolean isStared;
     private MediaPlayer article_audio;
     private final Integer skipLength = 10000;
-    private final Integer previousReplaysLimit = 5000;
+    private final Integer previousReplaysLimit = 10000;
     private final Integer moveBackAfterPause = 2500;
     private Handler mHandler = new Handler();
+    private boolean pressedButton = false;
 
     MicrophoneRecognitionClient micClient = null;
     MenuItem startSpeechRecognitionItem;
@@ -80,12 +82,13 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // or list index == 0
-                if (article_audio.getCurrentPosition() > previousReplaysLimit) {
+                if (article_audio.getCurrentPosition() > previousReplaysLimit
+                        || index == 0) {
                     article_audio.seekTo(0);
                 } else {
-                    // play previous
-                    //seekBar.setMax(article_audio.getDuration() / 1000);
+                    index -= 1;
+                    pressedButton = true;
+                    playArticle();
                 }
             }
         });
@@ -113,7 +116,9 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
                 if (index == da.articleList.size() - 1){
                     article_audio.pause();
                 } else {
-
+                    index += 1;
+                    pressedButton = true;
+                    playArticle();
                 }
                 // if list index == list.length - 1 then stop else next
                 // seekBar.setMax(article_audio.getDuration() / 1000);
@@ -170,27 +175,44 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
         article_audio.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                //if index == -1 then stop
-                if (index == da.articleList.size() - 1) {
-                    article_audio.pause();
-                } else {
-                    article_audio.reset();
-                    index +=1;
-                    article = da.articleList.get(index);
-                    String ghjk = "android.resouce://com.example.amarsaljic.newstospeech/";
-                    try {
-                        article_audio.setDataSource(PlayActivity.this, Uri.parse(ghjk + article.audio_file_id));
-                        article_audio.prepare();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                if (!pressedButton) {
+                    if (index == da.articleList.size() - 1) {
+                        article_audio.pause();
+                    } else {
+                        index += 1;
+                        playArticle();
                     }
-                    article_audio.start();
+                } else {
+                    pressedButton = false;
                 }
+            }
+        });
 
+        article_audio.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                article_audio.start();
+                seekBar.setMax(article_audio.getDuration() / 1000);
+                final ImageButton play = (ImageButton) findViewById(R.id.play);
+                play.setImageResource(R.drawable.ic_pause_circle_filled_black_48dp);
             }
         });
 
 
+    }
+
+    private void playArticle() {
+        article_audio.stop();
+        article_audio.reset();
+        article = da.articleList.get(index);
+        String ghjk = "android.resource://" + getPackageName() + "/raw/a";
+        try {
+            initArticleDescription();
+            article_audio.setDataSource(PlayActivity.this, Uri.parse(ghjk + article.article_id));
+            article_audio.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -220,6 +242,14 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        article_audio.pause();
+        final ImageButton play = (ImageButton) findViewById(R.id.play);
+        play.setImageResource(R.drawable.ic_play_circle_filled_black_48dp);
+    }
+
     private void seekBackIfPossible(Integer seekBackTime) {
         if (article_audio != null) {
             Integer currentPosition = article_audio.getCurrentPosition();
@@ -244,9 +274,21 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
                 mp.start();
                 startSpeechRecognition();
                 menuItem.setEnabled(false);
+
+                ImageButton play = (ImageButton) findViewById(R.id.play);
+                if (article_audio.isPlaying()) {
+                    article_audio.pause();
+                    //Integer l = article_audio.getCurrentPosition();
+                    play.setImageResource(R.drawable.ic_play_circle_filled_black_48dp);
+                }
+
                 return true;
             }
         });
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         return true;
     }
 
@@ -334,11 +376,19 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
             switch (intentName) {
                 case "Next_article":
                     toastIt("Playing the next article.");
+                    ImageButton button = (ImageButton) findViewById(R.id.next);
+                    button.performClick();
+                    article_audio.start();
                     break;
                 case "Previous_article":
+                    ImageButton button2 = (ImageButton) findViewById(R.id.previous);
+                    button2.performClick();
                     toastIt("Playing the previous article.");
+                    article_audio.start();
                     break;
                 case "repeat_article":
+                    article_audio.seekTo(0);
+                    article_audio.start();
                     toastIt("Repeat the article.");
                     break;
                 default:
@@ -348,6 +398,19 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
             this.startSpeechRecognitionItem.setEnabled(true);
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                article_audio.pause();
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

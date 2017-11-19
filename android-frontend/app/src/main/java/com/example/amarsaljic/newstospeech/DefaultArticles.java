@@ -34,7 +34,7 @@ public class DefaultArticles {
     }
 
     public List<Article> articleList;
-    private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:.S");
+    private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 
     private DefaultArticles(Context context) {
         articleList = new ArrayList<Article>();
@@ -61,7 +61,7 @@ public class DefaultArticles {
 
                 int mp3File = context.getResources().getIdentifier('a' + nextLine[0],
                         "raw", context.getPackageName());
-                Article a = new Article(provider, nextLine[2], nextLine[3], nextLine[4],
+                Article a = new Article(nextLine[0], provider, nextLine[2], nextLine[3], nextLine[4],
                         nextLine[5], nextLine[6], publishedDate, mp3File);
                 articleList.add(a);
             }

@@ -7,6 +7,7 @@ import java.util.Date;
  */
 
 public class Article {
+    String article_id;
     String provider_name;
     String category_name;
     String url;
@@ -16,8 +17,9 @@ public class Article {
     Date date_published;
     Integer audio_file_id;
 
-    public Article(String provider_name, String category_name, String url, String author,
+    public Article(String article_id, String provider_name, String category_name, String url, String author,
                    String title, String summary, Date date_published, Integer audio_file_id) {
+        this.article_id = article_id;
         this.provider_name = provider_name;
         this.category_name = category_name;
         this.url = url;

@@ -12,14 +12,32 @@
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
   </head>
   <body>
-    <div id="audio-bar"></div>
     <script>
+      function findArticleItem(article_id) {
+        return $('li.article[data-id=' + article_id + ']')[0];
+      }
       function playArticleAudio(article_id) {
         let url = '/audiofile/' + article_id;
         $.AudioPlayer.updateSource({source: url});
         $.AudioPlayer.play();
+        $('input', findArticleItem(article_id))[0].checked = false;
+
+        let title = $($('label', findArticleItem(article_id))[0]).text();
+        $('#current-text').text(title);
+      }
+      function playNextArticle() {
+        let nextArticle = $('li.article[data-id]').filter(function (x) {
+          return $('input', this)[0].checked;
+        })[0];
+        if (nextArticle) {
+          playArticleAudio(nextArticle.getAttribute('data-id'));
+        }
       }
     </script>
+    <div id="audio-header">
+      <span id="current">Currently Playing: <span id="current-text"></span></span>
+      <div id="audio-bar"></div>
+    </div>
     <ol id="content">
       {% for provider in providers %}
         <li class="expanded provider">
@@ -33,9 +51,9 @@
                   {% for article in articles %}
                     <li class="article" data-id="{{ article.article_id }}">
                       {{ article.title }}
+                      <button onclick="playArticleAudio(this.getAttribute('data-id'))" data-id="{{ article.article_id }}">Play</button>
                       <ol>
                         <li class="summary">{{ article.summary }}</li>
-                        <li class="play"><button onclick="playArticleAudio(this.getAttribute('data-id'))" data-id="{{ article.article_id }}">Play</button></li>
                       </ol>
                     </li>
                   {% endfor %}
@@ -51,6 +69,22 @@
         container: '#audio-bar',
         allowSeek: false,
         imagePath: '/static/image'
+      });
+      $($.AudioPlayer.elements.audioDom).on('ended', function () {
+        playNextArticle();
+      });
+      $(window).on('keydown', function (ev) {
+        if (ev.keyCode == 39) { // right
+          playNextArticle();
+          ev.preventDefault();
+        }
+        else if (ev.keyCode == 32) {
+          $.AudioPlayer.toggleplay({
+            pauseCallback: function() {},
+            playCallback: function () {}
+          });
+          ev.preventDefault();
+        }
       });
       $('#content').bonsai({
         expandAll: false,

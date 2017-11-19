@@ -96,20 +96,19 @@ public class TabListFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_parent_tablist, container, false);
 
-
         this.articleList = this.getAllArticles();
         this.providerNames = this.getAllProviderNames();
         this.listSortedByProviderCategoryArticles = this.getListOfProvidersWithCategoriesAndRelatedArticles();
 
-
-
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(myContext.getSupportFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) v.findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        mViewPager.setCurrentItem(0);
 
         tabLayout = (TabLayout) v.findViewById(R.id.tabs);
 
@@ -121,7 +120,6 @@ public class TabListFragment extends Fragment {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-
 
         return v;
     }
