@@ -1,6 +1,7 @@
 package com.example.amarsaljic.newstospeech;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -43,6 +44,8 @@ public class TabListFragment extends Fragment {
     private List<String> providerNames;
     private List<Article> articleList;
     static List<HashMap<String, List<Article>>> listSortedByProviderCategoryArticles;
+    static TabLayout tabLayout;
+
 
 
 
@@ -108,7 +111,7 @@ public class TabListFragment extends Fragment {
         mViewPager = (ViewPager) v.findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) v.findViewById(R.id.tabs);
+        tabLayout = (TabLayout) v.findViewById(R.id.tabs);
 
         for (String providerName: providerNames){
             tabLayout.addTab(tabLayout.newTab().setText(providerName));
@@ -265,16 +268,19 @@ public class TabListFragment extends Fragment {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_tab_list, container, false);
             ExpandableListView expandableListView = (ExpandableListView) rootView.findViewById(R.id.article_list_view);
-            HashMap<String, List<Article>> relevantArticlesSortedInCategories = getRelevantArticlesSortedInCategories(this.provider_id);
-            List<String> availableCategories = getAvailableCategories(this.provider_id);
+            HashMap<String, List<Article>> relevantArticlesSortedInCategories = getRelevantArticlesSortedInCategories(provider_id);
+            List<String> availableCategories = getAvailableCategories(provider_id);
             ArticleExpandableListAdapter expandableListAdapter = new ArticleExpandableListAdapter(getContext(), availableCategories, relevantArticlesSortedInCategories);
             expandableListView.setAdapter(expandableListAdapter);
             expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
                 @Override
                 public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
                     // TODO: Open DetailView!
-                    List<Article>  listOfArticlesInsideCategory = null;
-                    return false;
+                    int indexOfClickedArticle = i1;
+                    Intent intent = new Intent(getContext(), PlayActivity.class);
+                    intent.putExtra("index", 5);
+                    startActivity(intent);
+                    return true;
                 }
             });
 
