@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
 
         setupDrawerContent(navView);
 
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         FragmentManager manager = getSupportFragmentManager();
         try{
             manager.beginTransaction().replace(R.id.mycontainer, TabListFragment.class.newInstance()).addToBackStack(null).commit();

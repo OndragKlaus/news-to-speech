@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -214,6 +215,10 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
                 return true;
             }
         });
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         return true;
     }
 
@@ -315,6 +320,18 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
             this.startSpeechRecognitionItem.setEnabled(true);
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
