@@ -46,7 +46,7 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
 
     MicrophoneRecognitionClient micClient = null;
     MenuItem startSpeechRecognitionItem;
-    private int index = 16;
+    private int index = 3;
     DefaultArticles da = DefaultArticles.getInstance(this);
 
     @Override
