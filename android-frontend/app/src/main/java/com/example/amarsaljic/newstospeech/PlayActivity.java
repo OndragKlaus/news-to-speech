@@ -2,10 +2,12 @@ package com.example.amarsaljic.newstospeech;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 
 public class PlayActivity extends AppCompatActivity {
 
@@ -14,6 +16,7 @@ public class PlayActivity extends AppCompatActivity {
     private MediaPlayer article_audio;
     private final Integer skipLength = 10000;
     private final Integer previousReplaysLimit = 5000;
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,10 +24,12 @@ public class PlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_play);
 
         isStared = false;
+        final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
 
         DefaultArticles da = DefaultArticles.getInstance(this);
         this.article = da.articleList.get(0);
         article_audio = MediaPlayer.create(PlayActivity.this, this.article.audio_file_id);
+        seekBar.setMax(article_audio.getDuration() / 1000);
 
         //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
         //          .setAction("Action", null).show();
@@ -34,7 +39,6 @@ public class PlayActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // or list index == 0
-
                 Integer currentPosition = article_audio.getCurrentPosition();
                 if (currentPosition >= skipLength) {
                     article_audio.seekTo(currentPosition - skipLength);
@@ -90,6 +94,37 @@ public class PlayActivity extends AppCompatActivity {
                     star.setImageResource(R.drawable.ic_star_border_black_48dp);
                 }
                 isStared = !isStared;
+            }
+        });
+
+        //Make sure you update Seekbar on UI thread
+        PlayActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(article_audio != null){
+                    int mCurrentPosition = article_audio.getCurrentPosition() / 1000;
+                    seekBar.setProgress(mCurrentPosition);
+                }
+                mHandler.postDelayed(this, 100);
+            }
+        });
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(article_audio != null && fromUser){
+                    article_audio.seekTo(progress * 1000);
+                }
             }
         });
     }
