@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.microsoft.cognitiveservices.speechrecognition.ISpeechRecognitionServerEvents;
 import com.microsoft.cognitiveservices.speechrecognition.MicrophoneRecognitionClient;
@@ -265,6 +267,14 @@ public class PlayActivity extends AppCompatActivity  implements ISpeechRecogniti
             JSONObject highestRankedRecognizedIntent = recognizedIntents.getJSONObject(0);
             String intentName = highestRankedRecognizedIntent.getString("intent");
             //TODO: Trigger function based on intent
+            Log.i("Intent: ", intentName);
+            switch (intentName) {
+                case "Next_article":
+                    Toast.makeText(this, "Playing next article...", Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    break;
+            }
             this.micClient.endMicAndRecognition();
             this.startSpeechRecognitionItem.setEnabled(true);
         } catch (JSONException e) {
