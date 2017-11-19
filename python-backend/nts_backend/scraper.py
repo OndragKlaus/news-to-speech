@@ -35,24 +35,21 @@ def get_article(provider, info):
         logging.warn('NO METADATA {}'.format(info.url))
         return
 
-    try:
-        database.Article(
-            provider_id = database.Provider.get_or_create(
-                name = provider.get_provider_id(),
-                pretty_name = provider.get_provider_pretty_name()
-            ),
-            category_id = database.Category.get_or_create(name=metadata.category or 'unknown'),
-            guid = info.id,
-            url = info.url,
-            author = ';'.join(metadata.authors or []),  # XXX
-            title = metadata.title,
-            summary = summary,
-            is_top_article = metadata.is_top_article,
-            date_published = metadata.date_published,
-            date_summarized = datetime.datetime.now()
-        )
-    except Exception as exc:
-        logging.exception(exc)
+    database.Article(
+        provider_id = database.Provider.get_or_create(
+            name = provider.get_provider_id(),
+            pretty_name = provider.get_provider_pretty_name()
+        ),
+        category_id = database.Category.get_or_create(name=metadata.category or 'unknown'),
+        guid = info.id,
+        url = info.url,
+        author = ';'.join(metadata.authors or []),  # XXX
+        title = metadata.title,
+        summary = summary,
+        is_top_article = metadata.is_top_article,
+        date_published = metadata.date_published,
+        date_summarized = datetime.datetime.now()
+    )
 
 
 def main():
@@ -68,7 +65,10 @@ def main():
                 if database.Article.exists(guid=info.id):
                     logging.info('SKIP {}'.format(info.url))
                     continue
-                get_article(provider, info)
+                try:
+                    get_article(provider, info)
+                except Exception as exc:
+                    logging.exception(exc)
         if args.once:
             break
         time.sleep(30.0)

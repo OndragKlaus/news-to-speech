@@ -12,6 +12,7 @@ import pydub, pydub.playback
 import tempfile
 import time
 
+from pony import orm
 from . import database
 from .bingspeech import Speaker, BingSpeechApi
 from .config import config
@@ -83,13 +84,14 @@ def main():
 
     logging.info('Checking pending articles ...')
     while True:
-        query = database.Article.select(lambda a: a.audioblob == None)
-        for article in query:
-            try:
-                with database.orm.db_session():
+        with orm.db_session():
+            query = database.Article.select(lambda a: a.audioblob == None)
+            for article in query:
+                try:
                     synth_article(service, tok, article)
-            except Exception as exc:
-                logging.exception(exc)
-        if args.once:
-            break
-        time.sleep(args.interval)
+                    orm.commit()
+                except Exception as exc:
+                    logging.exception(exc)
+            if args.once:
+                break
+            time.sleep(args.interval)
